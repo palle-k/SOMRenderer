@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		E620BE6A1EB4DF1E00AF7F2B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620BE691EB4DF1E00AF7F2B /* main.swift */; };
+		E620BE711EB4DF2600AF7F2B /* SelfOrganizingMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620BE701EB4DF2600AF7F2B /* SelfOrganizingMap.swift */; };
+		E620BE731EB4DF2B00AF7F2B /* SOMUMatrixRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620BE721EB4DF2B00AF7F2B /* SOMUMatrixRenderer.swift */; };
+		E620BE751EB4F1BE00AF7F2B /* SOMInputSpaceRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620BE741EB4F1BE00AF7F2B /* SOMInputSpaceRenderer.swift */; };
+		E620BE771EB60FDA00AF7F2B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620BE761EB60FDA00AF7F2B /* Utility.swift */; };
+		E620BE791EB6100700AF7F2B /* KMeans.swift in Sources */ = {isa = PBXBuildFile; fileRef = E620BE781EB6100700AF7F2B /* KMeans.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +30,11 @@
 /* Begin PBXFileReference section */
 		E620BE661EB4DF1E00AF7F2B /* SOMRenderer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SOMRenderer; sourceTree = BUILT_PRODUCTS_DIR; };
 		E620BE691EB4DF1E00AF7F2B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		E620BE701EB4DF2600AF7F2B /* SelfOrganizingMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfOrganizingMap.swift; sourceTree = "<group>"; };
+		E620BE721EB4DF2B00AF7F2B /* SOMUMatrixRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SOMUMatrixRenderer.swift; sourceTree = "<group>"; };
+		E620BE741EB4F1BE00AF7F2B /* SOMInputSpaceRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SOMInputSpaceRenderer.swift; sourceTree = "<group>"; };
+		E620BE761EB60FDA00AF7F2B /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		E620BE781EB6100700AF7F2B /* KMeans.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KMeans.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +67,12 @@
 		E620BE681EB4DF1E00AF7F2B /* SOMRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				E620BE701EB4DF2600AF7F2B /* SelfOrganizingMap.swift */,
+				E620BE781EB6100700AF7F2B /* KMeans.swift */,
+				E620BE721EB4DF2B00AF7F2B /* SOMUMatrixRenderer.swift */,
+				E620BE741EB4F1BE00AF7F2B /* SOMInputSpaceRenderer.swift */,
 				E620BE691EB4DF1E00AF7F2B /* main.swift */,
+				E620BE761EB60FDA00AF7F2B /* Utility.swift */,
 			);
 			path = SOMRenderer;
 			sourceTree = "<group>";
@@ -121,6 +136,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E620BE771EB60FDA00AF7F2B /* Utility.swift in Sources */,
+				E620BE751EB4F1BE00AF7F2B /* SOMInputSpaceRenderer.swift in Sources */,
+				E620BE791EB6100700AF7F2B /* KMeans.swift in Sources */,
+				E620BE731EB4DF2B00AF7F2B /* SOMUMatrixRenderer.swift in Sources */,
+				E620BE711EB4DF2600AF7F2B /* SelfOrganizingMap.swift in Sources */,
 				E620BE6A1EB4DF1E00AF7F2B /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -231,7 +251,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEVELOPMENT_TEAM = BPTAR52LQF;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_UNROLL_LOOPS = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
