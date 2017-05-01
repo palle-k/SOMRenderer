@@ -118,6 +118,8 @@ class SOMUMatrixRenderer: SOMRenderer
 				}
 			}
 			
+			densities = densities.map{log($0 + 1)}
+			
 			min = Float(densities.min() ?? 0)
 			max = Float(densities.max() ?? 1)
 			
@@ -190,7 +192,7 @@ class SOMUMatrixRenderer: SOMRenderer
 				colors = 100.map{CGColor(gray: 1 - CGFloat($0) / 99, alpha: 1)}
 				
 			case .feature(index: _), .density(dataset: _):
-				colors = 100.map{NSColor(hue: CGFloat($0) / 99 * 0.667, saturation: 1, brightness: 1, alpha: 1).cgColor}
+				colors = 100.map{NSColor(hue: (1 - CGFloat($0) / 99) * 2 / 3, saturation: 1, brightness: 1, alpha: 1).cgColor}
 			}
 			
 			let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors as CFArray, locations: locations)!

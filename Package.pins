@@ -1,0 +1,12 @@
+{
+  "autoPin": true,
+  "pins": [
+    {
+      "package": "Progress",
+      "reason": null,
+      "repositoryURL": "https://github.com/jkandzi/Progress.swift",
+      "version": "0.2.0"
+    }
+  ],
+  "version": 1
+}

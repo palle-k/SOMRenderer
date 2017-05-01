@@ -11,19 +11,24 @@ import Accelerate
 
 extension Array
 {
-	static func distance(from: [Float], to: [Float]) -> Float
+	static func distanceSq(from: [Float], to: [Float]) -> Float
 	{
 		precondition(from.count == to.count, "Vectors must have equal dimension.")
 		var result: Float = 0
 		vDSP_distancesq(from, 1, to, 1, &result, vDSP_Length(from.count))
-		return sqrtf(result)
+		return result
+	}
+	
+	static func distance(from: [Float], to: [Float]) -> Float
+	{
+		return sqrt(distanceSq(from: from, to: to))
 	}
 	
 	static func compareDistance(_ reference: [Float]) -> ([Float],[Float]) -> Bool
 	{
 		return {
 			(_ first: [Float], _ second: [Float]) in
-			return distance(from: reference, to: first) < distance(from: reference, to: second)
+			return distanceSq(from: reference, to: first) < distanceSq(from: reference, to: second)
 		}
 	}
 }
