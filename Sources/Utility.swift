@@ -155,6 +155,11 @@ extension SelfOrganizingMap
 				.map { Float($0)! }
 		}
 		
-		self.init(nodes: nodes, dimensionSizes: dimensionSizes)
+		self.init(nodes: nodes, dimensionSizes: dimensionSizes, distanceFunction: hexagonDistance(from: to: ))
 	}
+}
+
+func hexagonDistance(from: [Int], to: [Int]) -> Float
+{
+	return Float(hexagonGridDistance(from: (column: from[0], row: from[1]), to: (column: to[0], row: to[1])))
 }

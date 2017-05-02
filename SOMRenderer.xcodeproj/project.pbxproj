@@ -74,6 +74,7 @@
 /* Begin PBXFileReference section */
 		E61972591EB9051100AAE6E9 /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
 		E619725A1EB9091F00AAE6E9 /* Maps.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Maps.png; sourceTree = "<group>"; };
+		E61972601EB923FD00AAE6E9 /* License */ = {isa = PBXFileReference; lastKnownFileType = text; path = License; sourceTree = SOURCE_ROOT; };
 		OBJ_10 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		OBJ_11 /* SelfOrganizingMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfOrganizingMap.swift; sourceTree = "<group>"; };
 		OBJ_12 /* SOMInputSpaceRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOMInputSpaceRenderer.swift; sourceTree = "<group>"; };
@@ -222,6 +223,7 @@
 				E619725A1EB9091F00AAE6E9 /* Maps.png */,
 				E61972591EB9051100AAE6E9 /* Readme.md */,
 				OBJ_6 /* Package.swift */,
+				E61972601EB923FD00AAE6E9 /* License */,
 				OBJ_7 /* Sources */,
 				OBJ_15 /* Tests */,
 				OBJ_16 /* Dependencies */,

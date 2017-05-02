@@ -99,7 +99,7 @@ let group = Group { group in
 		let movieVectors = try GenomeParser.parseMovieVectors(at: movieTagsURL)
 		print("Done. Beginning training...")
 		
-		let map = SelfOrganizingMap(mapWidth, mapHeight, outputSize: tags.count)
+		let map = SelfOrganizingMap(mapWidth, mapHeight, outputSize: tags.count, distanceFunction: hexagonDistance(from: to: ))
 		
 		for epoch in Progress(0 ..< epochs)
 		{
