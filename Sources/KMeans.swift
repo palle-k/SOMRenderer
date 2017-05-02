@@ -42,10 +42,10 @@ class KMeansClusterer
 			
 			for sample in clusters[i]
 			{
-				vDSP_vadd(sample, 1, sum, 1, &sum, 1, UInt(sample.count))
+				vDSP_vadd(sample, 1, sum, 1, &sum, 1, vDSP_Length(sample.count))
 			}
 			
-			vDSP_vsdiv(sum, 1, [max(Float(clusters[i].count), 1)], &sum, 1, UInt(sum.count))
+			vDSP_vsdiv(sum, 1, [max(Float(clusters[i].count), 1)], &sum, 1, vDSP_Length(sum.count))
 			clusterCenters[i] = sum
 		}
 		

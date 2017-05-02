@@ -68,9 +68,9 @@ class SelfOrganizingMap
 //				nodes[index][j] += neighbourhood[index] * (sample[j] - nodes[index][j])
 //			}
 			
-			vDSP_vsub(nodes[index], 1, sample, 1, temp, 1, UInt(sample.count))
-			vDSP_vsmul(temp, 1, [neighbourhood[index]], temp, 1, UInt(sample.count))
-			vDSP_vadd(temp, 1, nodes[index], 1, temp, 1, UInt(sample.count))
+			vDSP_vsub(nodes[index], 1, sample, 1, temp, 1, vDSP_Length(sample.count))
+			vDSP_vsmul(temp, 1, [neighbourhood[index]], temp, 1, vDSP_Length(sample.count))
+			vDSP_vadd(temp, 1, nodes[index], 1, temp, 1, vDSP_Length(sample.count))
 			nodes[index] = Array(UnsafeBufferPointer(start: temp, count: sample.count))
 			
 		}
@@ -118,11 +118,11 @@ class SelfOrganizingMap
 		
 //		return mask.map{expf(-$0 * $0 / nabla_sq_2) * alpha}
 		
-		vDSP_vsq(mask, 1, &mask, 1, UInt(mask.count))
-		vDSP_vneg(mask, 1, &mask, 1, UInt(mask.count))
-		vDSP_vsdiv(mask, 1, [nabla_sq_2], &mask, 1, UInt(mask.count))
+		vDSP_vsq(mask, 1, &mask, 1, vDSP_Length(mask.count))
+		vDSP_vneg(mask, 1, &mask, 1, vDSP_Length(mask.count))
+		vDSP_vsdiv(mask, 1, [nabla_sq_2], &mask, 1, vDSP_Length(mask.count))
 		vvexpf(&mask, mask, [Int32(mask.count)])
-		vDSP_vsmul(mask, 1, [alpha], &mask, 1, UInt(mask.count))
+		vDSP_vsmul(mask, 1, [alpha], &mask, 1, vDSP_Length(mask.count))
 		
 		return mask
 	}
