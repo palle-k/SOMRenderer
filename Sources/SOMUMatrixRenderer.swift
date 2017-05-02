@@ -154,23 +154,12 @@ class SOMUMatrixRenderer: SOMRenderer
 					y: horizontalScale * 1.5 * (CGFloat(y) + 0.75)
 				)
 				
-				context.addHexagon(at: position, radius: horizontalScale, rotation: 1 / 6 * CGFloat.pi)
+				context.addHexagon(at: position, radius: horizontalScale + 0.25, rotation: 1 / 6 * CGFloat.pi)
 				context.fillPath()
-				context.addHexagon(at: position, radius: horizontalScale, rotation: 1 / 6 * CGFloat.pi)
-				context.strokePath()
 				
-//				context.saveGState()
-//
-//				context.setFillColor(.black)
-//				context.setStrokeColor(.black)
-//				
-//				let distance = hexagonGridDistance(from: (column: 10, row: 10), to: (column: x, row: y))
-//				
-//				let line = CTLineCreateWithAttributedString(NSAttributedString(string: "\(distance)"))
-//				context.textPosition = position
-//				CTLineDraw(line, context)
-//				
-//				context.restoreGState()
+//				context.addHexagon(at: position, radius: horizontalScale, rotation: 1 / 6 * CGFloat.pi)
+//				context.strokePath()
+				
 			}
 		}
 		

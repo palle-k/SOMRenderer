@@ -10,84 +10,144 @@ import Foundation
 import CoreGraphics
 import Cocoa
 import Progress
+import Commander
 
-guard CommandLine.arguments.count > 1 else
+struct ValidationError: Error
 {
-	fatalError("No output file specified")
+	let description: String
 }
 
-let baseURL = URL(fileURLWithPath: "/Users/Palle/Downloads/ml-20m/")
-
-print("Parsing tags...")
-
-let tagsURL: URL
-
-if #available(OSX 10.11, *)
+extension Int
 {
-	tagsURL = URL(fileURLWithPath: "genome-tags.csv", relativeTo: baseURL)
-}
-else
-{
-	tagsURL = baseURL.appendingPathComponent("genome-tags.csv")
+	init(validatePositive value: Int) throws
+	{
+		guard value > 0 else
+		{
+			throw ValidationError(description: "Value \(value) expected to be positive.")
+		}
+		
+		self = value
+	}
 }
 
-let tags = try GenomeParser.parseTags(at: tagsURL)
-
-print("Parsing movie tags...")
-let vectorURL = URL(fileURLWithPath: "/Users/Palle/Desktop/movietags.csv")
-let movieVectors = try GenomeParser.parseMovieVectors(at: vectorURL)
-
-print("Done. Beginning training...")
-
-srand48(time(nil))
-
-let map = SelfOrganizingMap(30, 30, outputSize: tags.count)
-
-let epochs = 10_000_000
-
-for epoch in Progress(0 ..< epochs)
+extension Float
 {
-	map.update(with: movieVectors.random().1, totalIterations: epochs * 4 / 5, currentIteration: epoch)
+	init(validatePositive value: Float) throws
+	{
+		guard value > 0 else
+		{
+			throw ValidationError(description: "Value \(value) expected to be positive.")
+		}
+		
+		self = value
+	}
 }
 
-var renderer = SOMUMatrixRenderer(map: map, mode: .distance)
-//let renderer = SOMInputSpaceRenderer(map: map)
-
-let url = URL(fileURLWithPath: CommandLine.arguments[1])
-
-guard let context = CGContext(url as CFURL, mediaBox: [CGRect(x: 0, y: 0, width: 600 + 20, height: 600 + 20)], nil) else
+extension String
 {
-	fatalError("Could not render image. Context could not be created.")
+	init(validateExisting path: String) throws
+	{
+		guard FileManager.default.fileExists(atPath: path) else
+		{
+			throw ValidationError(description: "File \(path) does not exist.")
+		}
+		
+		self = path
+	}
 }
 
-renderer.drawsScale = true
-
-context.beginPDFPage(nil)
-context.translateBy(x: 10, y: 10)
-renderer.title = "Map Density"
-renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
-context.endPDFPage()
-
-for i in 0 ..< tags.count
-{
-	context.beginPDFPage(nil)
-	context.translateBy(x: 10, y: 10)
-	renderer.title = tags[i] ?? "Unknown Tag"
-	renderer.viewMode = .feature(index: i)
-	renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
-	context.endPDFPage()
+let group = Group { group in
+	
+	group.command(
+		"train",
+		Argument<Int>("map-width", description: "Width of the SOM", validator: Int.init(validatePositive: )),
+		Argument<Int>("map-height", description: "Height of the SOM", validator: Int.init(validatePositive: )),
+		Argument<Int>("epochs", description: "Number of epochs to train", validator: Int.init(validatePositive: )),
+		Argument<String>("tags", description: "Path to the genome-tags.csv file", validator: String.init(validateExisting: )),
+		Argument<String>("movie-tags", description: "Path to the movietags.csv file", validator: String.init(validateExisting: )),
+		Argument<String>("o", description: "Save path for the self organizing map"),
+		Option("nscale", 1, flag: nil, description: "Scale of neighbourhood", validator: Float.init(validatePositive: ))
+	) { mapWidth, mapHeight, epochs, tagsFilePath, movieTagsFilePath, mapFilePath, neighbourhoodScale in
+		
+		let tagsURL = URL(fileURLWithPath: tagsFilePath)
+		let movieTagsURL = URL(fileURLWithPath: movieTagsFilePath)
+		let mapURL = URL(fileURLWithPath: mapFilePath)
+		
+		print("Parsing tags...")
+		let tags = try GenomeParser.parseTags(at: tagsURL)
+		
+		print("Parsing movie tags...")
+		let movieVectors = try GenomeParser.parseMovieVectors(at: movieTagsURL)
+		print("Done. Beginning training...")
+		
+		let map = SelfOrganizingMap(mapWidth, mapHeight, outputSize: tags.count)
+		
+		for epoch in Progress(0 ..< epochs)
+		{
+			map.update(with: movieVectors.random().1, totalIterations: epochs * 4 / 5, currentIteration: epoch, neighbourhoodScale: neighbourhoodScale)
+		}
+		
+		try map.write(to: mapURL)
+	}
+	
+	group.command(
+		"render",
+		Argument<String>("map", description: "Path to the self organizing map", validator: String.init(validateExisting: )),
+		Argument<String>("tags", description: "Path to the genome-tags.csv file", validator: String.init(validateExisting: )),
+		Argument<String>("movie-tags", description: "Path to the movietags.csv file", validator: String.init(validateExisting: )),
+		Argument<String>("o", description: "Save path for the rendered map")
+	) { mapFilePath, tagsFilePath, movieTagsFilePath, outputFilePath in
+		
+		let tagsURL = URL(fileURLWithPath: tagsFilePath)
+		let mapURL = URL(fileURLWithPath: mapFilePath)
+		let movieTagsURL = URL(fileURLWithPath: movieTagsFilePath)
+		let saveURL = URL(fileURLWithPath: outputFilePath)
+		
+		print("Parsing map...")
+		let map = try SelfOrganizingMap(contentsOf: mapURL)
+		
+		print("Parsing tags...")
+		let tags = try GenomeParser.parseTags(at: tagsURL)
+		
+		print("Parsing movie tags...")
+		let movieTags = try GenomeParser.parseMovieVectors(at: movieTagsURL)
+		
+		print("Rendering...")
+		var renderer = SOMUMatrixRenderer(map: map, mode: .distance)
+		renderer.drawsScale = true
+		
+		guard let context = CGContext(saveURL as CFURL, mediaBox: [CGRect(x: 0, y: 0, width: 600 + 20, height: 600 + 20)], nil) else
+		{
+			fatalError("Could not render image. Context could not be created.")
+		}
+		
+		context.beginPDFPage(nil)
+		context.translateBy(x: 10, y: 10)
+		renderer.title = "Inverse Map Density"
+		renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
+		context.endPDFPage()
+		
+		for i in Progress(0 ..< tags.count)
+		{
+			context.beginPDFPage(nil)
+			context.translateBy(x: 10, y: 10)
+			renderer.title = tags[i] ?? "Unknown Tag"
+			renderer.viewMode = .feature(index: i)
+			renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
+			context.endPDFPage()
+		}
+		
+		context.beginPDFPage(nil)
+		context.translateBy(x: 10, y: 10)
+		renderer.title = "Log Dataset Density"
+		renderer.viewMode = .density(dataset: movieTags.map{$0.1})
+		renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
+		context.endPDFPage()
+		
+		context.flush()
+	}
 }
 
-context.beginPDFPage(nil)
-context.translateBy(x: 10, y: 10)
-renderer.title = "Log Dataset Density"
-renderer.viewMode = .density(dataset: movieVectors.map{$0.1})
-renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
-context.endPDFPage()
+group.run()
 
-//context.beginPDFPage(nil)
-//context.translateBy(x: 10, y: 10)
-//SOMInputSpaceRenderer(map: map).render(in: context, size: CGSize(width: 600, height: 600))
-//context.endPDFPage()
 
-context.flush()

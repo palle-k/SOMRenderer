@@ -8,6 +8,7 @@
 
 import Foundation
 import Accelerate
+import Progress
 
 extension Array
 {
@@ -102,5 +103,39 @@ extension Int
 	func map<Result>(_ transform: (Int) throws -> Result) rethrows -> [Result]
 	{
 		return try (0 ..< self).map(transform)
+	}
+}
+
+extension SelfOrganizingMap
+{
+	func write(to url: URL) throws
+	{
+		let dimensionsString = self.dimensionSizes.map(String.init).joined(separator: ",")
+		
+		let nodesString = self.nodes.map { node -> String in
+			return node.map(String.init).joined(separator: ",")
+		}
+		.joined(separator: "\n")
+		
+		try dimensionsString
+			.appending("\n")
+			.appending(nodesString)
+			.write(to: url, atomically: true, encoding: .ascii)
+	}
+	
+	convenience init(contentsOf url: URL) throws
+	{
+		let contents = try String(contentsOf: url)
+		let lines = contents.components(separatedBy: .newlines).filter { !$0.isEmpty }
+		
+		let dimensionSizes = lines.first!.components(separatedBy: ",").map { Int($0)! }
+		
+		let nodes = Progress(lines.dropFirst()).map { line -> SelfOrganizingMapNode in
+			line.components(separatedBy: ",")
+				.filter{ !$0.isEmpty }
+				.map { Float($0)! }
+		}
+		
+		self.init(nodes: nodes, dimensionSizes: dimensionSizes)
 	}
 }

@@ -26,6 +26,14 @@ class SelfOrganizingMap
 	private var temp: UnsafeMutablePointer<Float>
 	private var nabla_0: Float
 	
+	init(nodes: [SelfOrganizingMapNode], dimensionSizes: [Int])
+	{
+		self.nodes = nodes
+		self.temp = UnsafeMutablePointer<Float>.allocate(capacity: self.nodes.first?.count ?? 0)
+		self.dimensionSizes = dimensionSizes
+		self.nabla_0 = Float(self.dimensionSizes.max() ?? 1) / 2
+	}
+	
 	init(_ dimensionSizes: Int..., outputSize: Int)
 	{
 		self.dimensionSizes = dimensionSizes
@@ -44,12 +52,12 @@ class SelfOrganizingMap
 		return nodes[index(for: location)]
 	}
 	
-	final func update(with sample: Sample, totalIterations: Int, currentIteration: Int)
+	final func update(with sample: Sample, totalIterations: Int, currentIteration: Int, neighbourhoodScale: Float)
 	{
 		guard let winningPrototypeIndex = nodes.minIndex(by: Array<Any>.compareDistance(sample)) else { return }
 		let winningPrototypeCoordinates = coordinates(for: winningPrototypeIndex)
 		
-		let neighbourhood = generateNeighbourhood(of: winningPrototypeCoordinates, totalIterations: totalIterations, currentIteration: currentIteration)
+		let neighbourhood = generateNeighbourhood(of: winningPrototypeCoordinates, totalIterations: totalIterations, currentIteration: currentIteration, neighbourhoodScale: neighbourhoodScale)
 		
 //		var temp = Array<Float>(repeating: 0, count: self.nodes.first!.count)
 		
@@ -92,13 +100,13 @@ class SelfOrganizingMap
 		return zip(location, dimensionSizes).reversed().reduce(0) { $0 * $1.1 + $1.0 }
 	}
 	
-	private final func generateNeighbourhood(of: [Int], totalIterations: Int, currentIteration: Int) -> [Float]
+	private final func generateNeighbourhood(of: [Int], totalIterations: Int, currentIteration: Int, neighbourhoodScale: Float) -> [Float]
 	{
 //		let nabla_0 = pow(Float(self.nodes.count), 1 / Float(self.dimensions))
 //		let nabla_0 = Float(self.dimensionSizes.max() ?? 1) / 2
 		let lambda = Float(totalIterations) / logf(nabla_0)
 		let nabla = nabla_0 * expf(-Float(currentIteration) / lambda)
-		let nabla_sq_2 = nabla * nabla * 2
+		let nabla_sq_2 = nabla * nabla * 2 * neighbourhoodScale
 		let alpha = expf(-Float(currentIteration) / lambda)
 		
 		let to = (column: of[0], row: of[1])

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "OBJ_33"
+               BlueprintIdentifier = "OBJ_85"
                BuildableName = "SOMRenderer"
                BlueprintName = "SOMRenderer"
                ReferencedContainer = "container:SOMRenderer.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "OBJ_33"
+            BlueprintIdentifier = "OBJ_85"
             BuildableName = "SOMRenderer"
             BlueprintName = "SOMRenderer"
             ReferencedContainer = "container:SOMRenderer.xcodeproj">
@@ -55,7 +55,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "OBJ_33"
+            BlueprintIdentifier = "OBJ_85"
             BuildableName = "SOMRenderer"
             BlueprintName = "SOMRenderer"
             ReferencedContainer = "container:SOMRenderer.xcodeproj">
@@ -64,7 +64,7 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "/Users/Palle/Desktop/test4.pdf"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
@@ -80,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "OBJ_33"
+            BlueprintIdentifier = "OBJ_85"
             BuildableName = "SOMRenderer"
             BlueprintName = "SOMRenderer"
             ReferencedContainer = "container:SOMRenderer.xcodeproj">

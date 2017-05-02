@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Progress
 
 struct GenomeParser
 {
@@ -90,7 +91,7 @@ struct GenomeParser
 		
 		let lines = contents.components(separatedBy: .newlines).filter{!$0.isEmpty}
 		
-		return lines.map { line -> (String, Sample) in
+		return Progress(lines).map { line -> (String, Sample) in
 			
 			let usesQuotationMarks = line.contains("\"")
 			
