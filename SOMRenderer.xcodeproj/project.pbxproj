@@ -7,58 +7,137 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		OBJ_29 /* Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_18 /* Progress.swift */; };
-		OBJ_30 /* ProgressElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* ProgressElements.swift */; };
-		OBJ_31 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* Utilities.swift */; };
-		OBJ_38 /* GenomeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* GenomeParser.swift */; };
-		OBJ_39 /* KMeans.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* KMeans.swift */; };
-		OBJ_40 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* main.swift */; };
-		OBJ_41 /* SelfOrganizingMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* SelfOrganizingMap.swift */; };
-		OBJ_42 /* SOMInputSpaceRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* SOMInputSpaceRenderer.swift */; };
-		OBJ_43 /* SOMUMatrixRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* SOMUMatrixRenderer.swift */; };
-		OBJ_44 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* Utility.swift */; };
-		OBJ_46 /* Progress.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_22 /* Progress.framework */; };
+		OBJ_100 /* Commander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_43 /* Commander.framework */; };
+		OBJ_50 /* Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_37 /* Progress.swift */; };
+		OBJ_51 /* ProgressElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_38 /* ProgressElements.swift */; };
+		OBJ_52 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* Utilities.swift */; };
+		OBJ_59 /* Case.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_28 /* Case.swift */; };
+		OBJ_60 /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_29 /* Context.swift */; };
+		OBJ_61 /* Expectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_30 /* Expectation.swift */; };
+		OBJ_62 /* Failure.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* Failure.swift */; };
+		OBJ_63 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Global.swift */; };
+		OBJ_64 /* GlobalContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* GlobalContext.swift */; };
+		OBJ_65 /* Reporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_34 /* Reporter.swift */; };
+		OBJ_66 /* Reporters.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_35 /* Reporters.swift */; };
+		OBJ_73 /* ArgumentConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_18 /* ArgumentConvertible.swift */; };
+		OBJ_74 /* ArgumentDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* ArgumentDescription.swift */; };
+		OBJ_75 /* ArgumentParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_20 /* ArgumentParser.swift */; };
+		OBJ_76 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_21 /* Command.swift */; };
+		OBJ_77 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_22 /* CommandRunner.swift */; };
+		OBJ_78 /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* Commands.swift */; };
+		OBJ_79 /* CommandType.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* CommandType.swift */; };
+		OBJ_80 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* Error.swift */; };
+		OBJ_81 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* Group.swift */; };
+		OBJ_83 /* Spectre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_42 /* Spectre.framework */; };
+		OBJ_90 /* GenomeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* GenomeParser.swift */; };
+		OBJ_91 /* KMeans.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* KMeans.swift */; };
+		OBJ_92 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* main.swift */; };
+		OBJ_93 /* SelfOrganizingMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* SelfOrganizingMap.swift */; };
+		OBJ_94 /* SOMInputSpaceRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* SOMInputSpaceRenderer.swift */; };
+		OBJ_95 /* SOMUMatrixRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* SOMUMatrixRenderer.swift */; };
+		OBJ_96 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* Utility.swift */; };
+		OBJ_98 /* Progress.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_41 /* Progress.framework */; };
+		OBJ_99 /* Spectre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_42 /* Spectre.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E61972411EB79C4800AAE6E9 /* PBXContainerItemProxy */ = {
+		E61972551EB8BA5A00AAE6E9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = OBJ_1 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = OBJ_24;
+			remoteGlobalIDString = OBJ_45;
 			remoteInfo = Progress;
+		};
+		E61972561EB8BA5A00AAE6E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_54;
+			remoteInfo = Spectre;
+		};
+		E61972571EB8BA5A00AAE6E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_68;
+			remoteInfo = Commander;
+		};
+		E61972581EB8BA5A00AAE6E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_54;
+			remoteInfo = Spectre;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E61972591EB9051100AAE6E9 /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
+		E619725A1EB9091F00AAE6E9 /* Maps.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Maps.png; sourceTree = "<group>"; };
 		OBJ_10 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		OBJ_11 /* SelfOrganizingMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfOrganizingMap.swift; sourceTree = "<group>"; };
 		OBJ_12 /* SOMInputSpaceRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOMInputSpaceRenderer.swift; sourceTree = "<group>"; };
 		OBJ_13 /* SOMUMatrixRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOMUMatrixRenderer.swift; sourceTree = "<group>"; };
 		OBJ_14 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
-		OBJ_18 /* Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress.swift; sourceTree = "<group>"; };
-		OBJ_19 /* ProgressElements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressElements.swift; sourceTree = "<group>"; };
-		OBJ_20 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		OBJ_22 /* Progress.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Progress.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		OBJ_23 /* SOMRenderer */ = {isa = PBXFileReference; lastKnownFileType = text; path = SOMRenderer; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_18 /* ArgumentConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentConvertible.swift; sourceTree = "<group>"; };
+		OBJ_19 /* ArgumentDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentDescription.swift; sourceTree = "<group>"; };
+		OBJ_20 /* ArgumentParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentParser.swift; sourceTree = "<group>"; };
+		OBJ_21 /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		OBJ_22 /* CommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandRunner.swift; sourceTree = "<group>"; };
+		OBJ_23 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commands.swift; sourceTree = "<group>"; };
+		OBJ_24 /* CommandType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandType.swift; sourceTree = "<group>"; };
+		OBJ_25 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		OBJ_26 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		OBJ_28 /* Case.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Case.swift; sourceTree = "<group>"; };
+		OBJ_29 /* Context.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
+		OBJ_30 /* Expectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expectation.swift; sourceTree = "<group>"; };
+		OBJ_31 /* Failure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Failure.swift; sourceTree = "<group>"; };
+		OBJ_32 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		OBJ_33 /* GlobalContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalContext.swift; sourceTree = "<group>"; };
+		OBJ_34 /* Reporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reporter.swift; sourceTree = "<group>"; };
+		OBJ_35 /* Reporters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reporters.swift; sourceTree = "<group>"; };
+		OBJ_37 /* Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress.swift; sourceTree = "<group>"; };
+		OBJ_38 /* ProgressElements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressElements.swift; sourceTree = "<group>"; };
+		OBJ_39 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		OBJ_41 /* Progress.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Progress.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_42 /* Spectre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Spectre.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_43 /* Commander.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Commander.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_44 /* SOMRenderer */ = {isa = PBXFileReference; lastKnownFileType = text; path = SOMRenderer; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_8 /* GenomeParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenomeParser.swift; sourceTree = "<group>"; };
 		OBJ_9 /* KMeans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KMeans.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		OBJ_32 /* Frameworks */ = {
+		OBJ_53 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		OBJ_45 /* Frameworks */ = {
+		OBJ_67 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_46 /* Progress.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_82 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_83 /* Spectre.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_97 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_98 /* Progress.framework in Frameworks */,
+				OBJ_99 /* Spectre.framework in Frameworks */,
+				OBJ_100 /* Commander.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,27 +154,64 @@
 		OBJ_16 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_17 /* Progress 0.2.0 */,
+				OBJ_17 /* Commander 0.6.1 */,
+				OBJ_27 /* Spectre 0.7.2 */,
+				OBJ_36 /* Progress 0.2.0 */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
 		};
-		OBJ_17 /* Progress 0.2.0 */ = {
+		OBJ_17 /* Commander 0.6.1 */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_18 /* Progress.swift */,
-				OBJ_19 /* ProgressElements.swift */,
-				OBJ_20 /* Utilities.swift */,
+				OBJ_18 /* ArgumentConvertible.swift */,
+				OBJ_19 /* ArgumentDescription.swift */,
+				OBJ_20 /* ArgumentParser.swift */,
+				OBJ_21 /* Command.swift */,
+				OBJ_22 /* CommandRunner.swift */,
+				OBJ_23 /* Commands.swift */,
+				OBJ_24 /* CommandType.swift */,
+				OBJ_25 /* Error.swift */,
+				OBJ_26 /* Group.swift */,
+			);
+			name = "Commander 0.6.1";
+			path = ".build/checkouts/Commander.git-8842944228949165507/Sources";
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_27 /* Spectre 0.7.2 */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_28 /* Case.swift */,
+				OBJ_29 /* Context.swift */,
+				OBJ_30 /* Expectation.swift */,
+				OBJ_31 /* Failure.swift */,
+				OBJ_32 /* Global.swift */,
+				OBJ_33 /* GlobalContext.swift */,
+				OBJ_34 /* Reporter.swift */,
+				OBJ_35 /* Reporters.swift */,
+			);
+			name = "Spectre 0.7.2";
+			path = ".build/checkouts/Spectre.git--7655155069707042687/Sources";
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_36 /* Progress 0.2.0 */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_37 /* Progress.swift */,
+				OBJ_38 /* ProgressElements.swift */,
+				OBJ_39 /* Utilities.swift */,
 			);
 			name = "Progress 0.2.0";
 			path = ".build/checkouts/Progress.swift-9214689286208287740/Sources";
 			sourceTree = SOURCE_ROOT;
 		};
-		OBJ_21 /* Products */ = {
+		OBJ_40 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_22 /* Progress.framework */,
-				OBJ_23 /* SOMRenderer */,
+				OBJ_41 /* Progress.framework */,
+				OBJ_42 /* Spectre.framework */,
+				OBJ_43 /* Commander.framework */,
+				OBJ_44 /* SOMRenderer */,
 			);
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -103,11 +219,13 @@
 		OBJ_5 /*  */ = {
 			isa = PBXGroup;
 			children = (
+				E619725A1EB9091F00AAE6E9 /* Maps.png */,
+				E61972591EB9051100AAE6E9 /* Readme.md */,
 				OBJ_6 /* Package.swift */,
 				OBJ_7 /* Sources */,
 				OBJ_15 /* Tests */,
 				OBJ_16 /* Dependencies */,
-				OBJ_21 /* Products */,
+				OBJ_40 /* Products */,
 			);
 			name = "";
 			sourceTree = "<group>";
@@ -129,12 +247,12 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		OBJ_24 /* Progress */ = {
+		OBJ_45 /* Progress */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_25 /* Build configuration list for PBXNativeTarget "Progress" */;
+			buildConfigurationList = OBJ_46 /* Build configuration list for PBXNativeTarget "Progress" */;
 			buildPhases = (
-				OBJ_28 /* Sources */,
-				OBJ_32 /* Frameworks */,
+				OBJ_49 /* Sources */,
+				OBJ_53 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -142,24 +260,59 @@
 			);
 			name = Progress;
 			productName = Progress;
-			productReference = OBJ_22 /* Progress.framework */;
+			productReference = OBJ_41 /* Progress.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		OBJ_33 /* SOMRenderer */ = {
+		OBJ_54 /* Spectre */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_34 /* Build configuration list for PBXNativeTarget "SOMRenderer" */;
+			buildConfigurationList = OBJ_55 /* Build configuration list for PBXNativeTarget "Spectre" */;
 			buildPhases = (
-				OBJ_37 /* Sources */,
-				OBJ_45 /* Frameworks */,
+				OBJ_58 /* Sources */,
+				OBJ_67 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				OBJ_47 /* PBXTargetDependency */,
+			);
+			name = Spectre;
+			productName = Spectre;
+			productReference = OBJ_42 /* Spectre.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		OBJ_68 /* Commander */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_69 /* Build configuration list for PBXNativeTarget "Commander" */;
+			buildPhases = (
+				OBJ_72 /* Sources */,
+				OBJ_82 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_84 /* PBXTargetDependency */,
+			);
+			name = Commander;
+			productName = Commander;
+			productReference = OBJ_43 /* Commander.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		OBJ_85 /* SOMRenderer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_86 /* Build configuration list for PBXNativeTarget "SOMRenderer" */;
+			buildPhases = (
+				OBJ_89 /* Sources */,
+				OBJ_97 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_101 /* PBXTargetDependency */,
+				OBJ_102 /* PBXTargetDependency */,
+				OBJ_103 /* PBXTargetDependency */,
 			);
 			name = SOMRenderer;
 			productName = SOMRenderer;
-			productReference = OBJ_23 /* SOMRenderer */;
+			productReference = OBJ_44 /* SOMRenderer */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -178,94 +331,100 @@
 				en,
 			);
 			mainGroup = OBJ_5 /*  */;
-			productRefGroup = OBJ_21 /* Products */;
+			productRefGroup = OBJ_40 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				OBJ_24 /* Progress */,
-				OBJ_33 /* SOMRenderer */,
+				OBJ_45 /* Progress */,
+				OBJ_54 /* Spectre */,
+				OBJ_68 /* Commander */,
+				OBJ_85 /* SOMRenderer */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		OBJ_28 /* Sources */ = {
+		OBJ_49 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_29 /* Progress.swift in Sources */,
-				OBJ_30 /* ProgressElements.swift in Sources */,
-				OBJ_31 /* Utilities.swift in Sources */,
+				OBJ_50 /* Progress.swift in Sources */,
+				OBJ_51 /* ProgressElements.swift in Sources */,
+				OBJ_52 /* Utilities.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		OBJ_37 /* Sources */ = {
+		OBJ_58 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_38 /* GenomeParser.swift in Sources */,
-				OBJ_39 /* KMeans.swift in Sources */,
-				OBJ_40 /* main.swift in Sources */,
-				OBJ_41 /* SelfOrganizingMap.swift in Sources */,
-				OBJ_42 /* SOMInputSpaceRenderer.swift in Sources */,
-				OBJ_43 /* SOMUMatrixRenderer.swift in Sources */,
-				OBJ_44 /* Utility.swift in Sources */,
+				OBJ_59 /* Case.swift in Sources */,
+				OBJ_60 /* Context.swift in Sources */,
+				OBJ_61 /* Expectation.swift in Sources */,
+				OBJ_62 /* Failure.swift in Sources */,
+				OBJ_63 /* Global.swift in Sources */,
+				OBJ_64 /* GlobalContext.swift in Sources */,
+				OBJ_65 /* Reporter.swift in Sources */,
+				OBJ_66 /* Reporters.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_72 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_73 /* ArgumentConvertible.swift in Sources */,
+				OBJ_74 /* ArgumentDescription.swift in Sources */,
+				OBJ_75 /* ArgumentParser.swift in Sources */,
+				OBJ_76 /* Command.swift in Sources */,
+				OBJ_77 /* CommandRunner.swift in Sources */,
+				OBJ_78 /* Commands.swift in Sources */,
+				OBJ_79 /* CommandType.swift in Sources */,
+				OBJ_80 /* Error.swift in Sources */,
+				OBJ_81 /* Group.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_89 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_90 /* GenomeParser.swift in Sources */,
+				OBJ_91 /* KMeans.swift in Sources */,
+				OBJ_92 /* main.swift in Sources */,
+				OBJ_93 /* SelfOrganizingMap.swift in Sources */,
+				OBJ_94 /* SOMInputSpaceRenderer.swift in Sources */,
+				OBJ_95 /* SOMUMatrixRenderer.swift in Sources */,
+				OBJ_96 /* Utility.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		OBJ_47 /* PBXTargetDependency */ = {
+		OBJ_101 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = OBJ_24 /* Progress */;
-			targetProxy = E61972411EB79C4800AAE6E9 /* PBXContainerItemProxy */;
+			target = OBJ_45 /* Progress */;
+			targetProxy = E61972551EB8BA5A00AAE6E9 /* PBXContainerItemProxy */;
+		};
+		OBJ_102 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_54 /* Spectre */;
+			targetProxy = E61972561EB8BA5A00AAE6E9 /* PBXContainerItemProxy */;
+		};
+		OBJ_103 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_68 /* Commander */;
+			targetProxy = E61972571EB8BA5A00AAE6E9 /* PBXContainerItemProxy */;
+		};
+		OBJ_84 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_54 /* Spectre */;
+			targetProxy = E61972581EB8BA5A00AAE6E9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		OBJ_26 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = SOMRenderer.xcodeproj/Progress_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = Progress;
-				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				TARGET_NAME = Progress;
-			};
-			name = Debug;
-		};
-		OBJ_27 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = SOMRenderer.xcodeproj/Progress_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = Progress;
-				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				TARGET_NAME = Progress;
-			};
-			name = Release;
-		};
 		OBJ_3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -289,47 +448,6 @@
 			};
 			name = Debug;
 		};
-		OBJ_35 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = SOMRenderer.xcodeproj/SOMRenderer_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
-				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
-				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
-				TARGET_NAME = SOMRenderer;
-			};
-			name = Debug;
-		};
-		OBJ_36 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-				);
-				GCC_FAST_MATH = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
-				GCC_UNROLL_LOOPS = YES;
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				INFOPLIST_FILE = SOMRenderer.xcodeproj/SOMRenderer_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
-				LLVM_LTO = YES;
-				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited)";
-				SWIFT_DISABLE_SAFETY_CHECKS = YES;
-				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
-				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
-				TARGET_NAME = SOMRenderer;
-			};
-			name = Release;
-		};
 		OBJ_4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -351,6 +469,168 @@
 			};
 			name = Release;
 		};
+		OBJ_47 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SOMRenderer.xcodeproj/Progress_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = Progress;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = Progress;
+			};
+			name = Debug;
+		};
+		OBJ_48 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SOMRenderer.xcodeproj/Progress_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = Progress;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = Progress;
+			};
+			name = Release;
+		};
+		OBJ_56 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SOMRenderer.xcodeproj/Spectre_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = Spectre;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = Spectre;
+			};
+			name = Debug;
+		};
+		OBJ_57 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SOMRenderer.xcodeproj/Spectre_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = Spectre;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = Spectre;
+			};
+			name = Release;
+		};
+		OBJ_70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SOMRenderer.xcodeproj/Commander_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = Commander;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = Commander;
+			};
+			name = Debug;
+		};
+		OBJ_71 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SOMRenderer.xcodeproj/Commander_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = Commander;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGET_NAME = Commander;
+			};
+			name = Release;
+		};
+		OBJ_87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SOMRenderer.xcodeproj/SOMRenderer_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
+				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
+				TARGET_NAME = SOMRenderer;
+			};
+			name = Debug;
+		};
+		OBJ_88 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = SOMRenderer.xcodeproj/SOMRenderer_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
+				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
+				TARGET_NAME = SOMRenderer;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -363,20 +643,38 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		OBJ_25 /* Build configuration list for PBXNativeTarget "Progress" */ = {
+		OBJ_46 /* Build configuration list for PBXNativeTarget "Progress" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				OBJ_26 /* Debug */,
-				OBJ_27 /* Release */,
+				OBJ_47 /* Debug */,
+				OBJ_48 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		OBJ_34 /* Build configuration list for PBXNativeTarget "SOMRenderer" */ = {
+		OBJ_55 /* Build configuration list for PBXNativeTarget "Spectre" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				OBJ_35 /* Debug */,
-				OBJ_36 /* Release */,
+				OBJ_56 /* Debug */,
+				OBJ_57 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_69 /* Build configuration list for PBXNativeTarget "Commander" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_70 /* Debug */,
+				OBJ_71 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_86 /* Build configuration list for PBXNativeTarget "SOMRenderer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_87 /* Debug */,
+				OBJ_88 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
