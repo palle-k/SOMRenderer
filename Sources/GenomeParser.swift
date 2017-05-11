@@ -44,7 +44,7 @@ fileprivate extension String
 }
 
 
-enum GenomeParserError: Error
+enum ParserError: Error
 {
 	case invalidType(actual: String, expected: String)
 	case missingData(actual: String, expected: String)
@@ -85,12 +85,12 @@ struct GenomeParser
 			
 			guard columns.count >= 2 else
 			{
-				throw GenomeParserError.missingData(actual: line, expected: "Expected at least two columns: ID,NAME")
+				throw ParserError.missingData(actual: line, expected: "Expected at least two columns: ID,NAME")
 			}
 			
 			guard let id = Int(columns[0]) else
 			{
-				throw GenomeParserError.invalidType(actual: columns[0], expected: "Int")
+				throw ParserError.invalidType(actual: columns[0], expected: "Int")
 			}
 			
 			return (id, columns[1])
@@ -135,22 +135,22 @@ struct GenomeParser
 			
 			guard columns.count >= 2 else
 			{
-				throw GenomeParserError.missingData(actual: line, expected: "At least three columns: ID,TAGID,NAME")
+				throw ParserError.missingData(actual: line, expected: "At least three columns: ID,TAGID,NAME")
 			}
 			
 			guard let movieID = Int(columns[0]) else
 			{
-				throw GenomeParserError.invalidType(actual: columns[0], expected: "Int")
+				throw ParserError.invalidType(actual: columns[0], expected: "Int")
 			}
 			
 			guard let tagID = Int(columns[1]) else
 			{
-				throw GenomeParserError.invalidType(actual: columns[1], expected: "Int")
+				throw ParserError.invalidType(actual: columns[1], expected: "Int")
 			}
 			
 			guard let score = Float(columns[2]) else
 			{
-				throw GenomeParserError.invalidType(actual: columns[3], expected: "Float")
+				throw ParserError.invalidType(actual: columns[3], expected: "Float")
 			}
 			
 			return (movieID, tagID, score)
@@ -188,12 +188,12 @@ struct GenomeParser
 			
 			guard columns.count >= 3 else
 			{
-				throw GenomeParserError.missingData(actual: line, expected: "At least three columns: ID,NAME,GENRES")
+				throw ParserError.missingData(actual: line, expected: "At least three columns: ID,NAME,GENRES")
 			}
 			
 			guard let id = Int(columns[0]) else
 			{
-				throw GenomeParserError.invalidType(actual: columns[0], expected: "Int")
+				throw ParserError.invalidType(actual: columns[0], expected: "Int")
 			}
 			
 			return (id, Array(columns[1..<(columns.endIndex-1)]).joined(separator: ","))

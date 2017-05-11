@@ -153,12 +153,27 @@ extension SelfOrganizingMap
 		let contents = try String(contentsOf: url)
 		let lines = contents.components(separatedBy: .newlines).filter { !$0.isEmpty }
 		
-		let dimensionSizes = lines.first!.components(separatedBy: ",").map { Int($0)! }
+		let dimensionSizes = try lines.first!.components(separatedBy: ",").map { dimensionString -> Int in
+			
+			guard let dimensionSize = Int(dimensionString) else
+			{
+				throw ParserError.invalidType(actual: dimensionString, expected: "Int")
+			}
+			return dimensionSize
+		}
 		
-		let nodes = Progress(lines.dropFirst()).map { line -> SelfOrganizingMapNode in
-			line.components(separatedBy: ",")
+		let nodes = try Progress(lines.dropFirst()).map { line -> SelfOrganizingMapNode in
+			try line.components(separatedBy: ",")
 				.filter{ !$0.isEmpty }
-				.map { Float($0)! }
+				.map { valueString -> Float in
+					
+					guard let value = Float(valueString) else
+					{
+						throw ParserError.invalidType(actual: valueString, expected: "Float")
+					}
+					
+					return value
+				}
 		}
 		
 		self.init(nodes: nodes, dimensionSizes: dimensionSizes, distanceFunction: hexagonDistance(from: to: ))
