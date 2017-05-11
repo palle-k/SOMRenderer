@@ -140,11 +140,14 @@ class SelfOrganizingMap
 	///   - neighbourhoodScale: Scale applied to the neighbourhood.
 	final func update(with sample: Sample, totalIterations: Int, currentIteration: Int, neighbourhoodScale: Float)
 	{
+		// determine Best Matching Unit
 		guard let winningPrototypeIndex = nodes.minIndex(by: Array<Any>.compareDistance(sample)) else { return }
 		let winningPrototypeCoordinates = coordinates(for: winningPrototypeIndex)
 		
+		// Calculating neighbourhood scaling factors
 		let neighbourhood = generateNeighbourhood(of: winningPrototypeCoordinates, totalIterations: totalIterations, currentIteration: currentIteration, neighbourhoodScale: neighbourhoodScale)
 		
+		// Performing update
 		for index in self.nodes.indices
 		{
 			vDSP_vsub(nodes[index], 1, sample, 1, temp, 1, vDSP_Length(sample.count))
@@ -200,12 +203,19 @@ class SelfOrganizingMap
 	{
 //		let nabla_0 = pow(Float(self.nodes.count), 1 / Float(self.dimensions))
 //		let nabla_0 = Float(self.dimensionSizes.max() ?? 1) / 2
+		
+		// Calculating size of neighbourhood
+		
 		let lambda = Float(totalIterations) / logf(nabla_0)
 		let nabla = nabla_0 * expf(-Float(currentIteration) / lambda)
 		let nabla_sq_2 = nabla * nabla * 2 * neighbourhoodScale
+		
+		// Calculating learning rate
+		
 		let alpha = expf(-Float(currentIteration) / lambda)
 		
-//		let to = (column: of[0], row: of[1])
+		// Calculating factor for every index of the SOM:
+		// scale(i,j)= exp(-(dist(i,j)^2) / nabla_sq_2) * alpha
 		
 		var mask = nodes.indices.map { index -> Float in
 			let coord = coordinates(for: index)

@@ -30,97 +30,59 @@ import Cocoa
 import Progress
 import Commander
 
-
-struct ValidationError: Error
-{
-	let description: String
-}
-
-extension Int
-{
-	init(validatePositive value: Int) throws
-	{
-		guard value > 0 else
-		{
-			throw ValidationError(description: "Value \(value) expected to be positive.")
-		}
-		
-		self = value
-	}
-}
-
-extension Float
-{
-	init(validatePositive value: Float) throws
-	{
-		guard value > 0 else
-		{
-			throw ValidationError(description: "Value \(value) expected to be positive.")
-		}
-		
-		self = value
-	}
-}
-
-extension String
-{
-	init(validateExisting path: String) throws
-	{
-		guard FileManager.default.fileExists(atPath: path) else
-		{
-			throw ValidationError(description: "File \(path) does not exist.")
-		}
-		
-		self = path
-	}
-}
+// Create a group of commands: train and render
 
 let group = Group { group in
 	
 	group.command(
 		"train",
-		Argument<Int>("map-width", description: "Width of the SOM", validator: Int.init(validatePositive: )),
-		Argument<Int>("map-height", description: "Height of the SOM", validator: Int.init(validatePositive: )),
-		Argument<Int>("epochs", description: "Number of epochs to train", validator: Int.init(validatePositive: )),
-		Argument<String>("tags", description: "Path to the genome-tags.csv file", validator: String.init(validateExisting: )),
-		Argument<String>("movie-tags", description: "Path to the movietags.csv file", validator: String.init(validateExisting: )),
+		Argument("map-width", description: "Width of the SOM", validator: Int.init(validatePositive: )),
+		Argument("map-height", description: "Height of the SOM", validator: Int.init(validatePositive: )),
+		Argument("epochs", description: "Number of epochs to train", validator: Int.init(validatePositive: )),
+		Argument("dataset", description: "Path to the dataset file with which the map should be trained. The file must be in the format \"id1, feature1, ...\\nid2,...\"", validator: String.init(validateExisting: )),
 		Argument<String>("o", description: "Save path for the self organizing map"),
-		Option("nscale", 1, flag: nil, description: "Scale of neighbourhood", validator: Float.init(validatePositive: ))
-	) { mapWidth, mapHeight, epochs, tagsFilePath, movieTagsFilePath, mapFilePath, neighbourhoodScale in
+		Option("nscale", 1, flag: nil, description: "Scale of neighbourhood", validator: Float.init(validatePositive: )),
+		description: "Train a self organizing map on a given dataset"
+	) { mapWidth, mapHeight, epochs, movieTagsFilePath, mapFilePath, neighbourhoodScale in
 		
-		let tagsURL = URL(fileURLWithPath: tagsFilePath)
 		let movieTagsURL = URL(fileURLWithPath: movieTagsFilePath)
 		let mapURL = URL(fileURLWithPath: mapFilePath)
 		
-		print("Parsing tags...")
-		let tags = try GenomeParser.parseTags(at: tagsURL)
+		// Loading data
 		
 		print("Parsing movie tags...")
 		let movieVectors = try GenomeParser.parseMovieVectors(at: movieTagsURL)
 		print("Done. Beginning training...")
 		
-		let map = SelfOrganizingMap(mapWidth, mapHeight, outputSize: tags.count, distanceFunction: hexagonDistance(from: to: ))
+		// Creating and training map
+		
+		let map = SelfOrganizingMap(mapWidth, mapHeight, outputSize: movieVectors.first?.1.count ?? 0, distanceFunction: hexagonDistance(from: to: ))
 		
 		for epoch in Progress(0 ..< epochs)
 		{
 			map.update(with: movieVectors.random().1, totalIterations: epochs * 4 / 5, currentIteration: epoch, neighbourhoodScale: neighbourhoodScale)
 		}
 		
+		// Saving map
+		
 		try map.write(to: mapURL)
-	}
+	} // End command train
 	
 	group.command(
 		"render",
-		Argument<String>("map", description: "Path to the self organizing map", validator: String.init(validateExisting: )),
-		Argument<String>("tags", description: "Path to the genome-tags.csv file", validator: String.init(validateExisting: )),
-		Argument<String>("movie-tags", description: "Path to the movietags.csv file", validator: String.init(validateExisting: )),
-		Argument<String>("o", description: "Save path for the rendered map")
+		Argument("map", description: "Path to the self organizing map", validator: String.init(validateExisting: )),
+		Argument("tags", description: "Path to a CSV file containing names for the features of the dataset", validator: String.init(validateExisting: )),
+		Argument("dataset", description: "Path to the dataset file", validator: String.init(validateExisting: )),
+		Argument<String>("o", description: "Save path for the rendered map"),
+		description: "Renders the U-matrix, component planes and distribution of values from a dataset of a trained SOM"
 	) { mapFilePath, tagsFilePath, movieTagsFilePath, outputFilePath in
 		
 		let tagsURL = URL(fileURLWithPath: tagsFilePath)
 		let mapURL = URL(fileURLWithPath: mapFilePath)
 		let movieTagsURL = URL(fileURLWithPath: movieTagsFilePath)
 		let saveURL = URL(fileURLWithPath: outputFilePath)
+		
+		// Loading data
 		
 		print("Parsing map...")
 		let map = try SelfOrganizingMap(contentsOf: mapURL)
@@ -131,14 +93,18 @@ let group = Group { group in
 		print("Parsing movie tags...")
 		let movieTags = try GenomeParser.parseMovieVectors(at: movieTagsURL)
 		
+		// Setting up render contexts
+		
 		print("Rendering...")
 		var renderer = SOMUMatrixRenderer(map: map, mode: .distance)
 		renderer.drawsScale = true
 		
-		guard let context = CGContext(saveURL as CFURL, mediaBox: [CGRect(x: 0, y: 0, width: 600 + 20, height: 600 + 20)], nil) else
+		guard let context = CGContext(saveURL as CFURL, mediaBox: [CGRect(x: 0, y: 0, width: 620, height: 600)], nil) else
 		{
 			fatalError("Could not render image. Context could not be created.")
 		}
+		
+		// Render first page: U-Matrix
 		
 		context.beginPDFPage(nil)
 		context.translateBy(x: 10, y: 10)
@@ -146,15 +112,19 @@ let group = Group { group in
 		renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
 		context.endPDFPage()
 		
+		// Render Component Planes
+		
 		for i in Progress(0 ..< tags.count)
 		{
 			context.beginPDFPage(nil)
 			context.translateBy(x: 10, y: 10)
-			renderer.title = tags[i] ?? "Unknown Tag"
+			renderer.title = tags[i + 1] ?? "Unknown Tag"
 			renderer.viewMode = .feature(index: i)
 			renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
 			context.endPDFPage()
 		}
+		
+		// Render Dataset Density
 		
 		context.beginPDFPage(nil)
 		context.translateBy(x: 10, y: 10)
@@ -163,10 +133,32 @@ let group = Group { group in
 		renderer.render(in: context, size: CGSize(width: 600, height: 600 / renderer.aspectRatio))
 		context.endPDFPage()
 		
+		// Finish rendering
+		
 		context.flush()
+	} // End command render
+	
+	group.command(
+		"convert",
+		Argument("scores", description: "Path to file containing dataset in the format \"id,featureID,featureValue\\n...\"", validator: String.init(validateExisting: )),
+		Argument<String>("o", description: "Filepath to generated matrix file"),
+		description: "Converts a 2d matrix from a 3 column CSV representation (id, featureID, value) to a matrix file"
+	) { scoresFilePath, outputFilePath in
+		
+		let scoresURL = URL(fileURLWithPath: scoresFilePath)
+		let outputURL = URL(fileURLWithPath: outputFilePath)
+		
+		// Parse input CSV
+		print("Parsing scores...")
+		let scoreList = try GenomeParser.parseScores(at: scoresURL)
+		
+		print("Generating score matrix...")
+		let scores = GenomeParser.generateGenomeScoreMatrix(from: scoreList)
+		
+		// Write output CSV
+		print("Writing matrix...")
+		try GenomeParser.write(scores.map{[$0] + $1}, to: outputURL)
 	}
 }
 
 group.run()
-
-

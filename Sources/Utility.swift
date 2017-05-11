@@ -35,8 +35,14 @@ extension Array
 	{
 		precondition(from.count == to.count, "Vectors must have equal dimension.")
 		var result: Float = 0
+		
+//		let temp = UnsafeMutablePointer<Float>.allocate(capacity: from.count)
+//		defer { temp.deallocate(capacity: from.count) }
+//		vDSP_vsub(from, 1, to, 1, temp, 1, vDSP_Length(from.count))
+//		vDSP_svemg(temp, 1, &result, vDSP_Length(from.count))
+		
 		vDSP_distancesq(from, 1, to, 1, &result, vDSP_Length(from.count))
-		return result
+		return result // * result
 	}
 	
 	static func distance(from: [Float], to: [Float]) -> Float
@@ -162,4 +168,48 @@ extension SelfOrganizingMap
 func hexagonDistance(from: [Int], to: [Int]) -> Float
 {
 	return Float(hexagonGridDistance(from: (column: from[0], row: from[1]), to: (column: to[0], row: to[1])))
+}
+
+struct ValidationError: Error
+{
+	let description: String
+}
+
+extension Int
+{
+	init(validatePositive value: Int) throws
+	{
+		guard value > 0 else
+		{
+			throw ValidationError(description: "Value \(value) expected to be positive.")
+		}
+		
+		self = value
+	}
+}
+
+extension Float
+{
+	init(validatePositive value: Float) throws
+	{
+		guard value > 0 else
+		{
+			throw ValidationError(description: "Value \(value) expected to be positive.")
+		}
+		
+		self = value
+	}
+}
+
+extension String
+{
+	init(validateExisting path: String) throws
+	{
+		guard FileManager.default.fileExists(atPath: path) else
+		{
+			throw ValidationError(description: "File \(path) does not exist.")
+		}
+		
+		self = path
+	}
 }
