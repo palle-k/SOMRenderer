@@ -24,7 +24,6 @@
 //	SOFTWARE.
 
 
-import Foundation
 import Accelerate
 import Progress
 
@@ -138,9 +137,9 @@ extension SelfOrganizingMap
 		let dimensionsString = self.dimensionSizes.map(String.init).joined(separator: ",")
 		
 		let nodesString = self.nodes.map { node -> String in
-			return node.map(String.init).joined(separator: ",")
-		}
-		.joined(separator: "\n")
+				return node.map(String.init).joined(separator: ",")
+			}
+			.joined(separator: "\n")
 		
 		try dimensionsString
 			.appending("\n")

@@ -26,7 +26,6 @@
 
 import Foundation
 import CoreGraphics
-import Cocoa
 import Progress
 import Commander
 
@@ -64,8 +63,8 @@ let group = Group { group in
 		}
 		
 		// Saving map
-		
 		try map.write(to: mapURL)
+		
 	} // End command train
 	
 	group.command(
@@ -94,7 +93,6 @@ let group = Group { group in
 		let movieTags = try GenomeParser.parseMovieVectors(at: movieTagsURL)
 		
 		// Setting up render contexts
-		
 		print("Rendering...")
 		var renderer = SOMUMatrixRenderer(map: map, mode: .distance)
 		renderer.drawsScale = true
@@ -105,7 +103,6 @@ let group = Group { group in
 		}
 		
 		// Render first page: U-Matrix
-		
 		context.beginPDFPage(nil)
 		context.translateBy(x: 10, y: 10)
 		renderer.title = "Inverse Map Density"
@@ -113,7 +110,6 @@ let group = Group { group in
 		context.endPDFPage()
 		
 		// Render Component Planes
-		
 		for i in Progress(0 ..< tags.count)
 		{
 			context.beginPDFPage(nil)
@@ -125,7 +121,6 @@ let group = Group { group in
 		}
 		
 		// Render Dataset Density
-		
 		context.beginPDFPage(nil)
 		context.translateBy(x: 10, y: 10)
 		renderer.title = "Log Dataset Density"
@@ -134,8 +129,8 @@ let group = Group { group in
 		context.endPDFPage()
 		
 		// Finish rendering
-		
 		context.flush()
+		
 	} // End command render
 	
 	group.command(
@@ -158,7 +153,8 @@ let group = Group { group in
 		// Write output CSV
 		print("Writing matrix...")
 		try GenomeParser.write(scores.map{[$0] + $1}, to: outputURL)
-	}
+		
+	} // End command convert
 }
 
 group.run()

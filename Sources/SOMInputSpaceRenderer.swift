@@ -24,8 +24,6 @@
 //	SOFTWARE.
 
 
-import Foundation
-import Cocoa
 import CoreGraphics
 
 
