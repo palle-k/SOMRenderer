@@ -37,7 +37,7 @@ enum ViewMode
 }
 
 
-class SOMUMatrixRenderer: SOMRenderer
+struct SOMUMatrixRenderer: Renderer
 {
 	let map: SelfOrganizingMap
 	var viewMode: ViewMode
@@ -113,10 +113,7 @@ class SOMUMatrixRenderer: SOMRenderer
 			
 			return distanceSum / Float(nodeCount)
 		}
-		
-		minDistance = (0..<map.dimensionSizes[0]).flatMap{x in (0..<map.dimensionSizes[1]).map{[x, $0]}}.map(averageDistance).min() ?? 0
-		maxDistance = (0..<map.dimensionSizes[0]).flatMap{x in (0..<map.dimensionSizes[1]).map{[x, $0]}}.map(averageDistance).max() ?? 1
-		
+
 		var densities: [Float] = []
 		
 		switch viewMode
@@ -141,9 +138,9 @@ class SOMUMatrixRenderer: SOMRenderer
 			min = Float(densities.min() ?? 0)
 			max = Float(densities.max() ?? 1)
 			
-		default:
-			min = 0
-			max = 1
+		case .distance:
+			min = (0..<map.dimensionSizes[0]).flatMap{x in (0..<map.dimensionSizes[1]).map{[x, $0]}}.map(averageDistance).min() ?? 0
+			max = (0..<map.dimensionSizes[0]).flatMap{x in (0..<map.dimensionSizes[1]).map{[x, $0]}}.map(averageDistance).max() ?? 1
 		}
 		
 		for y in 0 ..< map.dimensionSizes[1]
@@ -153,7 +150,7 @@ class SOMUMatrixRenderer: SOMRenderer
 				switch viewMode
 				{
 				case .distance:
-					context.setFillColor(.init(gray: CGFloat(1 - (averageDistance([x,y]) - minDistance) / (maxDistance - minDistance)), alpha: 1))
+					context.setFillColor(.init(gray: CGFloat(1 - (averageDistance([x,y]) - min) / (max - min)), alpha: 1))
 					
 				case .feature(index: let featureIndex):
 					let val = map[x,y][featureIndex]
@@ -165,8 +162,6 @@ class SOMUMatrixRenderer: SOMRenderer
 					context.setFillColor(NSColor(hue: CGFloat((1 - (density - min) / (max - min)) * 2 / 3), saturation: 1, brightness: 1, alpha: 1).cgColor)
 				}
 				
-				context.setStrokeColor(.init(gray: 0, alpha: CGFloat((averageDistance([x,y]) - minDistance) / (maxDistance - minDistance))))
-				
 				let position = CGPoint(
 					x: horizontalScale * sqrt(3) * (CGFloat(x) + (y & 1 == 0 ? 1 : 0.5)),
 					y: horizontalScale * 1.5 * (CGFloat(y) + 0.75)
@@ -174,10 +169,6 @@ class SOMUMatrixRenderer: SOMRenderer
 				
 				context.addHexagon(at: position, radius: horizontalScale + 0.25, rotation: 1 / 6 * CGFloat.pi)
 				context.fillPath()
-				
-//				context.addHexagon(at: position, radius: horizontalScale, rotation: 1 / 6 * CGFloat.pi)
-//				context.strokePath()
-				
 			}
 		}
 		
@@ -207,10 +198,6 @@ class SOMUMatrixRenderer: SOMRenderer
 			
 			context.restoreGState()
 			
-//			context.saveGState()
-//			
-//			context.move(to: CGPoint(x: size.width / 2 - 120, y: verticalPosition))
-			
 			let minString: String
 			let maxString: String
 			
@@ -222,8 +209,8 @@ class SOMUMatrixRenderer: SOMRenderer
 			switch self.viewMode
 			{
 			case .distance:
-				minString = formatter.string(from: NSNumber(value: minDistance))!
-				maxString = formatter.string(from: NSNumber(value: maxDistance))!
+				minString = formatter.string(from: NSNumber(value: min))!
+				maxString = formatter.string(from: NSNumber(value: max))!
 				
 			case .feature(index: _), .density(dataset: _):
 				minString = formatter.string(from: NSNumber(value: min))!
@@ -245,8 +232,6 @@ class SOMUMatrixRenderer: SOMRenderer
 			context.textPosition = CGPoint(x: size.width / 2 + 110, y: verticalPosition + 5)
 			CTLineDraw(maxLine, context)
 			
-			
-//			context.restoreGState()
 		}
 		
 		if let title = self.title

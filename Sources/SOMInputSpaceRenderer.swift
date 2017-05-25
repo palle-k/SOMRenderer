@@ -27,22 +27,41 @@
 import CoreGraphics
 
 
-protocol SOMRenderer: class
+/// A Renderer draws something into a CGContext.
+protocol Renderer
 {
+	
+	/// Performs the rendering
+	///
+	/// - Parameters:
+	///   - context: Context into which is drawn
+	///   - size: The object must be drawn smaller than the size.
 	func render(`in` context: CGContext, size: CGSize)
 }
 
-class SOMInputSpaceRenderer: SOMRenderer
+
+/// A renderer which renders the nodes of a Self-Organizing Map
+/// in the input space
+struct SOMInputSpaceRenderer: Renderer
 {
+	
+	/// The map to be drawn
 	let map: SelfOrganizingMap
 	
+	
+	/// Creates a new renderer which renders a given Self-Organizing Map
+	/// in the input space.
+	///
+	/// - Parameter map: Map to be drawn
 	init(map: SelfOrganizingMap)
 	{
 		self.map = map
 	}
 	
+	
 	func render(in context: CGContext, size: CGSize)
 	{
+		// Determining the bounds of the Self-Organizing Map in the input space
 		let minX = self.map.nodes.map{$0[0]}.min() ?? 0
 		let maxX = self.map.nodes.map{$0[0]}.max() ?? 1
 		
@@ -54,10 +73,14 @@ class SOMInputSpaceRenderer: SOMRenderer
 		
 		context.setStrokeColor(.black)
 		
+		// Drawing the self organizing map
+		
 		for y in 0 ..< map.dimensionSizes[1]
 		{
 			for x in 0 ..< map.dimensionSizes[0]
 			{
+				// Topological horizontal connection to the next node on the right
+				
 				if x < map.dimensionSizes[0] - 1
 				{
 					context.move(
@@ -74,11 +97,15 @@ class SOMInputSpaceRenderer: SOMRenderer
 					)
 				}
 				
+				// Topological vertical connections to the nodes in the row below
+				
 				if y < map.dimensionSizes[1] - 1
 				{
 					if y & 1 == 1
 					{
-						// uneven row, connected to next: 0, -1
+						// If the row is uneven, a node is connected to the
+						// node to the left one row below and to the node directly below.
+					
 						context.move(
 							to: CGPoint(
 								x: CGFloat(map[x, y][0] - minX) * horizontalScale,
@@ -111,7 +138,9 @@ class SOMInputSpaceRenderer: SOMRenderer
 					}
 					else
 					{
-						// even row, connected to next: 0, 1
+						// If the row is uneven, a node is connected to the
+						// node directly below and the node below to the right.
+						
 						context.move(
 							to: CGPoint(
 								x: CGFloat(map[x, y][0] - minX) * horizontalScale,
