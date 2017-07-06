@@ -65,7 +65,7 @@ In single request mode, the program is launched, reads a request from stdin, pri
 ./.build/release/SOMRenderer movies <som-filepath> <genome-tags-filepath> <movies-filepath> <joined-movies-scores-filepath> < request-file.json
 ```
 
-**Similar Tags Requests***:
+**Similar Tags Requests**:
 
 ```
 ./.build/release/SOMRenderer similar-tags <som-filepath> <genome-tags-filepath> < request-file.json
