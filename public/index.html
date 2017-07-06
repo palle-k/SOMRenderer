@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>SOM Movie API</title>
+	<style>
+		* {
+			font-family: "Roboto", "Helvetica Neue", "Helvetica", sans-serif;
+		}
+		body {
+			position: relative;
+			max-width: 1024px;
+			width: 100%;
+			padding-left: 20px;
+			padding-right: 20px;
+			margin: 0 auto;
+		}
+
+		#query_field {
+			width: 800px;
+			height: 40px;
+			padding: 5px;
+			font-size: 18px;
+			outline: none;
+			border: none;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+			transition: border-color 0.1s linear, border-width 0.1s ease;
+			font-weight: 300;
+			margin-right: 10px;
+		}
+
+		#query_field:focus {
+			border-color: rgb(30, 128, 240);
+			border-width: 3px;
+		}
+
+		#query_button {
+			color: white;
+			width: 189px;
+			height: 52px;
+			padding: 5px;
+			margin-left: 10px;
+			font-size: 18px;
+			outline: none;
+			border: none;
+			border-radius: 2px;
+			background-color: rgb(30, 128, 240);
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+		}
+
+		#query_button:active {
+			background-color: rgb(26, 108, 203);
+		}
+
+		#result_list {
+			padding-left: 0;
+		}
+
+		#result_list li {
+			display: block;
+			width: 100%;
+			background-color: white;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+			margin-top: 10px;
+			margin-bottom: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			margin-left: 0;
+		}
+	</style>
+	<script>
+		function search() {
+			let queryString = document.getElementById('query_field').value;
+			let queryTags = queryString.split(/,\s*/);
+			let queryElements = queryTags.map(tag => {
+				let factor;
+				if (tag.startsWith("-")) {
+					factor = -1;
+				} else {
+					factor = 1;
+				}
+
+				let tagName;
+
+				if (/^[+-].*/.test(tag)) {
+					tagName = tag.substring(1);
+				} else {
+					tagName = tag;
+				}
+
+				return {
+					tag: tagName,
+					priority: factor
+				}
+			});
+			let requestBody = {
+				tags: queryElements,
+				count: 100
+			};
+			let request = new XMLHttpRequest();
+			request.open("GET", "http://localhost:8000/movies/" + encodeURIComponent(JSON.stringify(requestBody)), true);
+			request.onreadystatechange = () => {
+				if (request.readyState !== 4) {
+					return;
+				}
+
+				let response = JSON.parse(request.responseText);
+
+				let resultList = document.getElementById('result_list');
+				while (resultList.firstChild) {
+					resultList.removeChild(resultList.firstChild);
+				}
+
+				response.movies.map(movie => {
+					let element = document.createElement('li');
+					element.innerText = movie;
+					return element;
+				}).forEach(element => resultList.appendChild(element));
+			};
+			request.send();
+		}
+
+		function searchfield_handle(event) {
+			if (event.keyCode !== 13) {
+				return;
+			}
+
+			search();
+		}
+	</script>
+</head>
+<body>
+	<h1>SOM Movie API</h1>
+	<input id="query_field" onkeyup="searchfield_handle(event)" type="text" placeholder="Enter Query String (action, -science fiction, +aliens, ...)">
+	<button id="query_button" onclick="search()">Search!</button>
+	<ul id="result_list">
+
+	</ul>
+</body>
+</html>

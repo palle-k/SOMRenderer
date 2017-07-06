@@ -35,11 +35,6 @@ struct TagSimilarityResponse: Codable {
 	let request: TagSimilarityRequest
 	let matchedTags: [MatchedTag]
 	
-	init<C: Collection>(request: TagSimilarityRequest, matchedTags: C) where C.Element == MatchedTag {
-		self.request = request
-		self.matchedTags = Array(matchedTags)
-	}
-	
 	private enum CodingKeys: String, CodingKey {
 		case request
 		case matchedTags = "matches"
@@ -49,6 +44,30 @@ struct TagSimilarityResponse: Codable {
 struct TagSearchEngine {
 	var map: SelfOrganizingMap
 	var tags: [String: Int]
+	
+	init(mapURL: URL, tagsURL: URL) throws {
+		let map: SelfOrganizingMap
+		let tags: [Int: String]
+		
+		do {
+			print("Parsing map...")
+			map = try SelfOrganizingMap(contentsOf: mapURL)
+			print("Parsing tags...")
+			tags = try GenomeParser.parseTags(at: tagsURL)
+			
+		} catch {
+			fatalError("Could not parse map or tags")
+		}
+		
+		print("Building index...")
+		let tagNames = tags.map({ (element) -> (String, Int) in
+			let (key, value) = element
+			return (value, key - 1)
+		})
+		
+		self.map = map
+		self.tags = Dictionary(uniqueKeysWithValues: tagNames)
+	}
 	
 	func similarTags(`for` request: TagSimilarityRequest) -> TagSimilarityResponse {
 		let scoredTags = tags.map { (tag) -> MatchedTag in
@@ -72,19 +91,31 @@ struct TagSearchEngine {
 			return MatchedTag(tag: key, score: tagScore)
 		}
 		
+		let filteredTags:[MatchedTag]
+		
+		if let threshold = request.threshold {
+			filteredTags = scoredTags.filter({ (tag) -> Bool in
+				return tag.score <= threshold
+			})
+		} else {
+			filteredTags = scoredTags
+		}
+		
+		let sortedTags = filteredTags.sorted(by: {
+			$0.score < $1.score
+		})
+		
+		let result: [MatchedTag]
+		
+		if let count = request.count {
+			result = Array(sortedTags.prefix(count))
+		} else {
+			result = sortedTags
+		}
+		
 		let response = TagSimilarityResponse(
 			request: request,
-			matchedTags: scoredTags.sorted(by: {
-				$0.score < $1.score
-			})
-			.filter({ (tag) -> Bool in
-				if let threshold = request.threshold {
-					return tag.score <= threshold
-				} else {
-					return true
-				}
-			})
-			.prefix(request.count ?? Int.max)
+			matchedTags: Array(result)
 		)
 		
 		return response

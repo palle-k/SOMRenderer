@@ -28,6 +28,9 @@ import Foundation
 import CoreGraphics
 import Progress
 import Commander
+import Kitura
+import KituraNet
+import KituraCORS
 
 // Create a group of commands: train and render
 
@@ -159,7 +162,8 @@ let group = Group { group in
 	group.command(
 		"similar-tags",
 		Argument("map", description: "Path to the self organizing map", validator: String.init(validateExisting: )),
-		Argument("tags", description: "Path to a CSV file containing names for the features of the dataset", validator: String.init(validateExisting: ))
+		Argument("tags", description: "Path to a CSV file containing names for the features of the dataset", validator: String.init(validateExisting: )),
+		description: "Finds tags similar to a set of given tags."
 	) { mapFilePath, tagsFilePath in
 		let inputString = sequence(first: "", next: {_ in readLine()}).joined(separator: "\n")
 		
@@ -215,25 +219,7 @@ let group = Group { group in
 		let tagsURL = URL(fileURLWithPath: tagsFilePath)
 		let mapURL = URL(fileURLWithPath: mapFilePath)
 		
-		let map: SelfOrganizingMap
-		let tags: [Int: String]
-		
-		do {
-			print("Parsing map...")
-			map = try SelfOrganizingMap(contentsOf: mapURL)
-			print("Parsing tags...")
-			tags = try GenomeParser.parseTags(at: tagsURL)
-			
-		} catch {
-			fatalError("Could not parse map or tags")
-		}
-		
-		let tagNames = tags.map({ (element) -> (String, Int) in
-			let (key, value) = element
-			return (value, key - 1)
-		})
-		
-		let engine = TagSearchEngine(map: map, tags: Dictionary(uniqueKeysWithValues: tagNames))
+		let engine = try TagSearchEngine(mapURL: mapURL, tagsURL: tagsURL)
 		
 		let response = engine.similarTags(for: request)
 		let encoder = JSONEncoder()
@@ -242,6 +228,144 @@ let group = Group { group in
 			fatalError("Internal Error: Invalid Response.")
 		}
 		print(responseString)
+	}
+	
+	group.command(
+		"movies",
+		Argument("map", description: "Path to the self organizing map", validator: String.init(validateExisting: )),
+		Argument("tags", description: "Path to a CSV file containing names for the features of the dataset", validator: String.init(validateExisting: )),
+		Argument("movie-names", description: "Path to a CSV file containing names of movies", validator: String.init(validateExisting: )),
+		Argument("movie-vectors", description: "Path to the movie tag vector file", validator: String.init(validateExisting: )),
+		description: "Finds movies which best match a list of tags"
+	) { mapFilePath, tagsFilePath, movieNamesFilePath, movieVectorsFilePath in
+		
+		let inputString = sequence(first: "", next: {_ in readLine()}).joined(separator: "\n")
+		
+		guard !inputString.isEmpty, let inputData = inputString.data(using: .utf8) else {
+			print("""
+				No input provided.
+				""")
+			exit(1)
+		}
+		
+		let request: MovieSearchRequest
+		
+		do {
+			request = try JSONDecoder().decode(MovieSearchRequest.self, from: inputData)
+		} catch {
+			print("""
+				Invalid input provided (\(error))
+				""")
+			exit(1)
+		}
+		
+		
+		let tagsURL = URL(fileURLWithPath: tagsFilePath)
+		let mapURL = URL(fileURLWithPath: mapFilePath)
+		let movieNamesURL = URL(fileURLWithPath: movieNamesFilePath)
+		let movieVectorsURL = URL(fileURLWithPath: movieVectorsFilePath)
+		
+		let index = try MovieSearchIndex(mapURL: mapURL, tagsURL: tagsURL, movieNamesURL: movieNamesURL, movieVectorsURL: movieVectorsURL)
+		let engine = MovieSearchEngine(index: index)
+		let response = engine.findMovies(for: request)
+		let encoder = JSONEncoder()
+		encoder.outputFormatting = .prettyPrinted
+		
+		guard let responseString = try String(data: encoder.encode(response), encoding: .utf8) else {
+			fatalError("Internal Error: Invalid Response.")
+		}
+		
+		print(responseString)
+	}
+	
+	group.command(
+		"server",
+		Argument("map", description: "Path to the self organizing map", validator: String.init(validateExisting: )),
+		Argument("tags", description: "Path to a CSV file containing names for the features of the dataset", validator: String.init(validateExisting: )),
+		Argument("movie-names", description: "Path to a CSV file containing names of movies", validator: String.init(validateExisting: )),
+		Argument("movie-vectors", description: "Path to the movie tag vector file", validator: String.init(validateExisting: )),
+		Option("port", 8000, flag: "p", description: "The TCP port on which the server should run", validator: { port in
+			if port <= 0 {
+				throw ValidationError(description: "Port must be greater than 0.")
+			} else {
+				return port
+			}
+		}),
+		description: "Runs a HTTP server which responds to JSON requests."
+	) { mapFilePath, tagsFilePath, movieNamesFilePath, movieVectorsFilePath, port in
+		let tagsURL = URL(fileURLWithPath: tagsFilePath)
+		let mapURL = URL(fileURLWithPath: mapFilePath)
+		let movieNamesURL = URL(fileURLWithPath: movieNamesFilePath)
+		let movieVectorsURL = URL(fileURLWithPath: movieVectorsFilePath)
+		
+		let movieSearchIndex = try MovieSearchIndex(mapURL: mapURL, tagsURL: tagsURL, movieNamesURL: movieNamesURL, movieVectorsURL: movieVectorsURL)
+		let movieSearchEngine = MovieSearchEngine(index: movieSearchIndex)
+		
+		let tagSearchEngine = try TagSearchEngine(mapURL: mapURL, tagsURL: tagsURL)
+		
+		print("Running Server...")
+		
+		let router = Router()
+		router.all(
+			middleware: CORS(
+				options: KituraCORS.Options(
+					allowedOrigin: .all,
+					credentials: false,
+					methods: ["GET"],
+					allowedHeaders: nil,
+					maxAge: nil,
+					exposedHeaders: nil,
+					preflightContinue: true
+				)
+			)
+		)
+		
+		router.get("/movies/:query") { request, response, next in
+			defer { next() }
+			
+			guard let queryString = request.parameters["query"], let queryData = queryString.data(using: .utf8) else {
+				response.statusCode = HTTPStatusCode.badRequest
+				response.send("Error 400: No Query.")
+				return
+			}
+			
+			guard let query = try? JSONDecoder().decode(MovieSearchRequest.self, from: queryData) else {
+				response.statusCode = HTTPStatusCode.badRequest
+				response.send("Error 400: Invalid Query.")
+				return
+			}
+			
+			let result = movieSearchEngine.findMovies(for: query)
+			try response.send(result)
+		}
+		
+		router.get("/tags/:query") { request, response, next in
+			defer { next() }
+			
+			guard let queryString = request.parameters["query"], let queryData = queryString.data(using: .utf8) else {
+				response.statusCode = HTTPStatusCode.badRequest
+				response.send("Error 400: No Query.")
+				return
+			}
+			
+			guard let query = try? JSONDecoder().decode(TagSimilarityRequest.self, from: queryData) else {
+				response.statusCode = HTTPStatusCode.badRequest
+				response.send("Error 400: Invalid Query.")
+				return
+			}
+			
+			let result = tagSearchEngine.similarTags(for: query)
+			try response.send(result)
+		}
+		
+		router.get("/static", middleware: StaticFileServer())
+		
+		router.get("/") { request, response, next in
+			next()
+		}
+		
+		Kitura.addHTTPServer(onPort: port, with: router)
+		Kitura.run()
 	}
 }
 

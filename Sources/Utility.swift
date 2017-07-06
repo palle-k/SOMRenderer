@@ -26,12 +26,10 @@
 
 import Accelerate
 import Progress
+import Kitura
 
-
-extension Array
-{
-	static func distanceSq(from: [Float], to: [Float]) -> Float
-	{
+extension Array {
+	static func distanceSq(from: [Float], to: [Float]) -> Float {
 		precondition(from.count == to.count, "Vectors must have equal dimension.")
 		var result: Float = 0
 		
@@ -44,13 +42,11 @@ extension Array
 		return result // * result
 	}
 	
-	static func distance(from: [Float], to: [Float]) -> Float
-	{
+	static func distance(from: [Float], to: [Float]) -> Float {
 		return sqrt(distanceSq(from: from, to: to))
 	}
 	
-	static func compareDistance(_ reference: [Float]) -> ([Float],[Float]) -> Bool
-	{
+	static func compareDistance(_ reference: [Float]) -> ([Float],[Float]) -> Bool {
 		return {
 			(_ first: [Float], _ second: [Float]) in
 			return distanceSq(from: reference, to: first) < distanceSq(from: reference, to: second)
@@ -58,38 +54,45 @@ extension Array
 	}
 }
 
-extension Array
-{
-	func minIndex(by compare: @escaping (Element, Element) throws -> Bool) rethrows -> Int?
-	{
+extension Array {
+	func minIndex(by compare: @escaping (Element, Element) throws -> Bool) rethrows -> Int? {
 		return try self.enumerated().min(by: {try compare($0.1, $1.1)})?.0
 	}
 	
-	func random() -> Element
-	{
+	func maxIndex(by compare: @escaping (Element, Element) throws -> Bool) rethrows -> Int? {
+		return try self.enumerated().max(by: {try compare($0.1, $1.1)})?.0
+	}
+	
+	func random() -> Element {
 		return self[Int(arc4random_uniform(UInt32(self.count)))]
 	}
 }
 
-func randomCirclePoint() -> Sample
-{
+extension Array where Element: Comparable {
+	func minIndex() -> Int? {
+		return self.minIndex(by: <)
+	}
+	
+	func maxIndex() -> Int? {
+		return self.maxIndex(by: <)
+	}
+}
+
+func randomCirclePoint() -> Sample {
 	let t = 2 * Float.pi * Float.random()
 	let r = Float.random()
 	return [sqrt(r) * cos(t), sqrt(r) * sin(t)]
 }
 
-func randomSquarePoint() -> Sample
-{
+func randomSquarePoint() -> Sample {
 	return [Float.random() * 2 - 1, Float.random() * 2 - 1]
 }
 
-func randomCubePoint() -> Sample
-{
+func randomCubePoint() -> Sample {
 	return [Float.random() * 2 - 1, Float.random() * 2 - 1, Float.random() * 2 - 1]
 }
 
-func randomPlanePoint() -> Sample
-{
+func randomPlanePoint() -> Sample {
 	let squarePoint = randomSquarePoint()
 	let x = squarePoint[0]
 	let z = squarePoint[1]
@@ -97,18 +100,14 @@ func randomPlanePoint() -> Sample
 	return [x,y,z]
 }
 
-extension Float
-{
-	static func random() -> Float
-	{
+extension Float {
+	static func random() -> Float {
 		return Float(drand48())
 	}
 }
 
-func hexagonGridDistance(from: (column: Int, row: Int), to: (column: Int, row: Int)) -> Int
-{
-	func toCubeCoordinates(point: (column: Int, row: Int)) -> (x: Int, y: Int, z: Int)
-	{
+func hexagonGridDistance(from: (column: Int, row: Int), to: (column: Int, row: Int)) -> Int {
+	func toCubeCoordinates(point: (column: Int, row: Int)) -> (x: Int, y: Int, z: Int) {
 		let x = point.column - (point.row + (point.row & 1)) / 2
 		let z = point.row
 		let y = -x - z
@@ -122,18 +121,14 @@ func hexagonGridDistance(from: (column: Int, row: Int), to: (column: Int, row: I
 	//	return (abs(fromCube.x - toCube.x) + abs(fromCube.y - toCube.y) + abs(fromCube.z - toCube.z)) / 2
 }
 
-extension Int
-{
-	func map<Result>(_ transform: (Int) throws -> Result) rethrows -> [Result]
-	{
+extension Int {
+	func map<Result>(_ transform: (Int) throws -> Result) rethrows -> [Result] {
 		return try (0 ..< self).map(transform)
 	}
 }
 
-extension SelfOrganizingMap
-{
-	func write(to url: URL) throws
-	{
+extension SelfOrganizingMap {
+	func write(to url: URL) throws {
 		let dimensionsString = self.dimensionSizes.map(String.init).joined(separator: ",")
 		
 		let nodesString = self.nodes.map { node -> String in
@@ -147,15 +142,13 @@ extension SelfOrganizingMap
 			.write(to: url, atomically: true, encoding: .ascii)
 	}
 	
-	convenience init(contentsOf url: URL) throws
-	{
+	convenience init(contentsOf url: URL) throws {
 		let contents = try String(contentsOf: url)
 		let lines = contents.components(separatedBy: .newlines).filter { !$0.isEmpty }
 		
 		let dimensionSizes = try lines.first!.components(separatedBy: ",").map { dimensionString -> Int in
 			
-			guard let dimensionSize = Int(dimensionString) else
-			{
+			guard let dimensionSize = Int(dimensionString) else {
 				throw ParserError.invalidType(actual: dimensionString, expected: "Int")
 			}
 			return dimensionSize
@@ -166,8 +159,7 @@ extension SelfOrganizingMap
 				.filter{ !$0.isEmpty }
 				.map { valueString -> Float in
 					
-					guard let value = Float(valueString) else
-					{
+					guard let value = Float(valueString) else {
 						throw ParserError.invalidType(actual: valueString, expected: "Float")
 					}
 					
@@ -179,22 +171,17 @@ extension SelfOrganizingMap
 	}
 }
 
-func hexagonDistance(from: [Int], to: [Int]) -> Float
-{
+func hexagonDistance(from: [Int], to: [Int]) -> Float {
 	return Float(hexagonGridDistance(from: (column: from[0], row: from[1]), to: (column: to[0], row: to[1])))
 }
 
-struct ValidationError: Error, CustomStringConvertible
-{
+struct ValidationError: Error, CustomStringConvertible {
 	let description: String
 }
 
-extension Int
-{
-	init(validatePositive value: Int) throws
-	{
-		guard value > 0 else
-		{
+extension Int {
+	init(validatePositive value: Int) throws {
+		guard value > 0 else {
 			throw ValidationError(description: "Value \(value) expected to be positive.")
 		}
 		
@@ -202,12 +189,9 @@ extension Int
 	}
 }
 
-extension Float
-{
-	init(validatePositive value: Float) throws
-	{
-		guard value > 0 else
-		{
+extension Float {
+	init(validatePositive value: Float) throws {
+		guard value > 0 else {
 			throw ValidationError(description: "Value \(value) expected to be positive.")
 		}
 		
@@ -215,15 +199,23 @@ extension Float
 	}
 }
 
-extension String
-{
-	init(validateExisting path: String) throws
-	{
-		guard FileManager.default.fileExists(atPath: path) else
-		{
+extension String {
+	init(validateExisting path: String) throws {
+		guard FileManager.default.fileExists(atPath: path) else {
 			throw ValidationError(description: "File \(path) does not exist.")
 		}
 		
 		self = path
 	}
 }
+
+extension RouterResponse {
+	@discardableResult
+	func send<Value: Encodable>(_ value: Value, encoder: JSONEncoder = JSONEncoder()) throws -> RouterResponse {
+		let encoded = try encoder.encode(value)
+		self.send(data: encoded)
+		
+		return self
+	}
+}
+

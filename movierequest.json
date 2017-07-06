@@ -1,0 +1,8 @@
+{
+	"tags": [
+		{"tag": "action", "priority": 1},
+		{"tag": "science fiction", "priority": 1},
+		{"tag": "evolution", "priority": 5}
+	],
+	"threshold": 2
+}
