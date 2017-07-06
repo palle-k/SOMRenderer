@@ -11,7 +11,7 @@ used on the MovieLens Dataset.
 
 1. clone this repository.
 2. cd into the cloned repository.
-3. Build using `swift build --configuration release`.
+3. Build with `swift build --configuration release`.
 
 ## Running
 
@@ -45,7 +45,31 @@ This will render the U-Matrix showing the average distance between neighbouring 
 
 ### Searching for tags and movies
 
+SOMRenderer can either be run in Server Mode or single request mode.
 
+#### Server Mode
+
+In server mode, a HTTP server responds to GET requests on /movies/:query and /tags/:query, where :query will be replaced by a JSON request.
+
+```
+./.build/release/SOMRenderer server <som-filepath> <genome-tags-filepath> <movies-filepath> <joined-movies-scores-filepath>
+```
+
+#### Single Request Mode
+
+In single request mode, the program is launched, reads a request from stdin, prints the result to stdout and terminates.
+
+**Movie Requests**:
+
+```
+./.build/release/SOMRenderer movies <som-filepath> <genome-tags-filepath> <movies-filepath> <joined-movies-scores-filepath> < request-file.json
+```
+
+**Similar Tags Requests***:
+
+```
+./.build/release/SOMRenderer similar-tags <som-filepath> <genome-tags-filepath> < request-file.json
+```
 
 # References
 
