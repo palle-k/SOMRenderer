@@ -75,9 +75,20 @@
 			margin-left: 0;
 		}
 
+		#tag_list_title {
+			color: rgba(0, 0, 0, 0.5);
+			display: none;
+			font-weight: 300;
+			margin-left: 10px;
+			margin-right: 10px;
+			margin-bottom: 0;
+			padding-bottom: 0;
+		}
+
 		#tag_list {
 			padding-left: 0;
 			text-align: center;
+			margin-top: 5px;
 		}
 
 		#tag_list li {
@@ -194,6 +205,7 @@
 					}).forEach(element => {
 						tagList.appendChild(element);
 					});
+					document.getElementById('tag_list_title').style.display = "block";
 				};
 				request.send();
 			})();
@@ -213,6 +225,7 @@
 	<h1>SOM Movie API</h1>
 	<input id="query_field" onkeyup="searchfield_handle(event)" type="text" placeholder="Enter Query String (action, -science fiction, +aliens, ...)" autocomplete="off" autofocus>
 	<button id="query_button" onclick="search()">Search</button>
+	<p id="tag_list_title">Similar tags:</p>
 	<ul id="tag_list">
 
 	</ul>
