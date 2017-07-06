@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 	<title>SOM Movie API</title>
 	<style>
 		* {
@@ -11,27 +12,32 @@
 			position: relative;
 			max-width: 1024px;
 			width: 100%;
-			padding-left: 20px;
-			padding-right: 20px;
 			margin: 0 auto;
 		}
 
+		h1 {
+			text-align: center;
+		}
+
 		#query_field {
-			width: 800px;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			width: 80%;
 			height: 40px;
 			padding: 5px;
 			font-size: 18px;
 			outline: none;
-			border: none;
-			border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-			transition: border-color 0.1s linear, border-width 0.1s ease;
+			border: 1px solid rgba(0, 0, 0, 0.4);
+			transition: border-color 0.1s linear;
 			font-weight: 300;
-			margin-right: 10px;
+			display: block;
+			margin: 0 auto;
+			border-radius: 3px;
 		}
 
 		#query_field:focus {
 			border-color: rgb(30, 128, 240);
-			border-width: 3px;
 		}
 
 		#query_button {
@@ -39,13 +45,14 @@
 			width: 189px;
 			height: 52px;
 			padding: 5px;
-			margin-left: 10px;
 			font-size: 18px;
 			outline: none;
 			border: none;
 			border-radius: 2px;
 			background-color: rgb(30, 128, 240);
-			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+			display: block;
+			margin: 20px auto;
 		}
 
 		#query_button:active {
@@ -58,15 +65,42 @@
 
 		#result_list li {
 			display: block;
-			width: 100%;
 			background-color: white;
-			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 			margin-top: 10px;
 			margin-bottom: 10px;
 			padding-top: 20px;
 			padding-bottom: 20px;
 			padding-left: 20px;
 			margin-left: 0;
+		}
+
+		#tag_list {
+			padding-left: 0;
+			text-align: center;
+		}
+
+		#tag_list li {
+			display: inline-block;
+			color: rgb(30, 128, 240);
+			font-weight: 500;
+			margin-left: 10px;
+			margin-right: 10px;
+			cursor: pointer;
+			line-height: 26px;
+		}
+
+		footer {
+			margin-top: 50px;
+			margin-bottom: 20px;
+			font-weight: 300;
+			font-size: 12px;
+			color: rgba(0, 0, 0, 0.5);
+			text-align: center;
+		}
+
+		footer a {
+			color: rgba(0, 0, 0, 0.5);
 		}
 	</style>
 	<script>
@@ -90,35 +124,80 @@
 				}
 
 				return {
-					tag: tagName,
+					tag: tagName.toLowerCase().trim(),
 					priority: factor
 				}
 			});
-			let requestBody = {
+			let movieRequestBody = {
 				tags: queryElements,
 				count: 100
 			};
-			let request = new XMLHttpRequest();
-			request.open("GET", "http://localhost:8000/movies/" + encodeURIComponent(JSON.stringify(requestBody)), true);
-			request.onreadystatechange = () => {
-				if (request.readyState !== 4) {
-					return;
-				}
-
-				let response = JSON.parse(request.responseText);
-
-				let resultList = document.getElementById('result_list');
-				while (resultList.firstChild) {
-					resultList.removeChild(resultList.firstChild);
-				}
-
-				response.movies.map(movie => {
-					let element = document.createElement('li');
-					element.innerText = movie;
-					return element;
-				}).forEach(element => resultList.appendChild(element));
+			let tagRequestBody = {
+				tags: queryElements.map(tag => tag.tag),
+				method: "similar",
+				count: 10
 			};
-			request.send();
+
+			(() => {
+				let request = new XMLHttpRequest();
+				request.open("GET", "/movies/" + encodeURIComponent(JSON.stringify(movieRequestBody)), true);
+				request.onreadystatechange = () => {
+					if (request.readyState !== 4) {
+						return;
+					}
+
+					let response = JSON.parse(request.responseText);
+
+					let resultList = document.getElementById('result_list');
+					while (resultList.firstChild) {
+						resultList.removeChild(resultList.firstChild);
+					}
+
+					response.movies.map(movie => {
+						let element = document.createElement('li');
+						element.innerText = movie;
+						return element;
+					}).forEach(element => resultList.appendChild(element));
+				};
+				request.send();
+			})();
+
+			(() => {
+				let request = new XMLHttpRequest();
+				request.open("GET", "/tags/" + encodeURIComponent(JSON.stringify(tagRequestBody)), true);
+				request.onreadystatechange = () => {
+					if (request.readyState !== 4) {
+						return;
+					}
+
+					let response = JSON.parse(request.responseText);
+
+					let tagList = document.getElementById('tag_list');
+					while (tagList.firstChild) {
+						tagList.removeChild(tagList.firstChild);
+					}
+
+					response.matches.map(tag => tag.tag).map(tag => {
+						let element = document.createElement('li');
+						element.innerText = tag;
+						element.onclick = function() {
+							let newText = document.getElementById('query_field').value;
+							if (queryString.length === 0) {
+								newText = tag;
+							} else {
+								newText += ", " + tag;
+							}
+							document.getElementById('query_field').value = newText;
+							search();
+						};
+						return element;
+					}).forEach(element => {
+						tagList.appendChild(element);
+					});
+				};
+				request.send();
+			})();
+
 		}
 
 		function searchfield_handle(event) {
@@ -132,10 +211,17 @@
 </head>
 <body>
 	<h1>SOM Movie API</h1>
-	<input id="query_field" onkeyup="searchfield_handle(event)" type="text" placeholder="Enter Query String (action, -science fiction, +aliens, ...)">
-	<button id="query_button" onclick="search()">Search!</button>
+	<input id="query_field" onkeyup="searchfield_handle(event)" type="text" placeholder="Enter Query String (action, -science fiction, +aliens, ...)" autocomplete="off" autofocus>
+	<button id="query_button" onclick="search()">Search</button>
+	<ul id="tag_list">
+
+	</ul>
 	<ul id="result_list">
 
 	</ul>
+	<footer>
+		&copy; 2017 Palle Klewitz<br>
+		<a href="https://github.com/palle-k/SOMRenderer">SOMRenderer on GitHub</a>
+	</footer>
 </body>
 </html>
