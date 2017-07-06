@@ -13,7 +13,7 @@ used on the MovieLens Dataset.
 2. cd into the cloned repository.
 3. Build using `swift build --configuration release`.
 
-## Usage
+## Running
 
 ### Learn the dataset
 

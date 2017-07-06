@@ -1,4 +1,4 @@
-// swift-tools-version:3.1
+// swift-tools-version:4.0
 
 //  Package.swift
 //  SOMRenderer
@@ -30,7 +30,10 @@ import PackageDescription
 let package = Package(
     name: "SOMRenderer",
     dependencies: [
-		.Package(url: "https://github.com/jkandzi/Progress.swift", majorVersion: 0),
-		.Package(url: "https://github.com/kylef/Commander.git", majorVersion: 0)
-	]
+		.package(url: "https://github.com/jkandzi/Progress.swift", from: "0.0.0"),
+		.package(url: "https://github.com/kylef/Commander.git", from: "0.0.0")
+	],
+    targets: [
+        .target(name: "SOMRenderer", dependencies: ["Progress", "Commander"], path: "Sources")
+    ]
 )

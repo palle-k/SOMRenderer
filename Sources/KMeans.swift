@@ -66,7 +66,7 @@ class KMeansClusterer
 			clusterCenters[i] = sum
 		}
 		
-		return !zip(clusterCenters, currentCenters).map{$0 == $1}.reduce(true, {$0 && $1})
+		return !zip(clusterCenters, currentCenters).map{$0.0 == $0.1}.reduce(true, {$0 && $1})
 	}
 	
 	func samples(`for` clusterIndex: Int) -> [Sample]

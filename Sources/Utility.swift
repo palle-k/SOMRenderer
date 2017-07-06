@@ -184,7 +184,7 @@ func hexagonDistance(from: [Int], to: [Int]) -> Float
 	return Float(hexagonGridDistance(from: (column: from[0], row: from[1]), to: (column: to[0], row: to[1])))
 }
 
-struct ValidationError: Error
+struct ValidationError: Error, CustomStringConvertible
 {
 	let description: String
 }
