@@ -48,7 +48,7 @@ This will render the U-Matrix showing the average distance between neighbouring 
 A HTTP server responds to GET requests on /movies/:query and /tags/:query, where :query will be replaced by a JSON request string.
 
 ```
-./.build/release/SOMServer server <som-filepath> <genome-tags-filepath> <movies-filepath> <joined-movies-scores-filepath>
+./.build/release/SOMServer <som-filepath> <genome-tags-filepath> <movies-filepath> <joined-movies-scores-filepath>
 ```
 
 # References
