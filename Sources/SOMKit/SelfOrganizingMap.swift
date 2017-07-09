@@ -27,27 +27,27 @@
 import Accelerate
 
 
-typealias SelfOrganizingMapNode = [Float]
-typealias Sample = [Float]
+public typealias SelfOrganizingMapNode = [Float]
+public typealias Sample = [Float]
 
 
 /// A Kohonen Self-Organizing Map
 ///
 /// A Self-Organizing Map is used to reduce dimensionality 
 /// of a dataset while preserving topology.
-class SelfOrganizingMap
+public class SelfOrganizingMap
 {
 	
 	/// Topological size of the map.
 	///
 	/// If dimensionSizes == [10, 10], the map is a 2D grid consisting of 10 x 10 nodes.
-	let dimensionSizes: [Int]
+	public let dimensionSizes: [Int]
 	
 	
 	/// Dimensions of the map.
 	/// 
 	/// If the map is a 2D grid, this value will be 2.
-	var dimensions: Int
+	public var dimensions: Int
 	{
 		return dimensionSizes.count
 	}
@@ -59,13 +59,13 @@ class SelfOrganizingMap
 	///
 	/// Map coordinates can be transformed to array indices and vice versa using the
 	/// `index(for: )` and `coordinates(for: )` functions.
-	private(set) var nodes: [SelfOrganizingMapNode]
+	public private(set) var nodes: [SelfOrganizingMapNode]
 	
 	
 	/// Function determining the distance between two nodes based on their indices on the map.
 	///
 	/// This may be the Euclidean distance or the distance on a hexagonal grid.
-	var distanceFunction: ([Int], [Int]) -> Float
+	public var distanceFunction: ([Int], [Int]) -> Float
 	
 	
 	/// Buffer used as temporary store for vectorized operations on nodes
@@ -82,7 +82,7 @@ class SelfOrganizingMap
 	///   - nodes: Node vectors
 	///   - dimensionSizes: Topological size of the map
 	///   - distanceFunction: Function determining the distance between nodes during training.
-	init(nodes: [SelfOrganizingMapNode], dimensionSizes: [Int], distanceFunction: @escaping ([Int], [Int]) -> Float)
+	public init(nodes: [SelfOrganizingMapNode], dimensionSizes: [Int], distanceFunction: @escaping ([Int], [Int]) -> Float)
 	{
 		self.nodes = nodes
 		self.temp = UnsafeMutablePointer<Float>.allocate(capacity: self.nodes.first?.count ?? 0)
@@ -98,7 +98,7 @@ class SelfOrganizingMap
 	///   - dimensionSizes: Topological size of the map
 	///   - outputSize: Dimensionality of node vectors of the map.
 	///   - distanceFunction: Function determining the distance between nodes during training.
-	init(_ dimensionSizes: Int..., outputSize: Int, distanceFunction: @escaping ([Int], [Int]) -> Float)
+	public init(_ dimensionSizes: Int..., outputSize: Int, distanceFunction: @escaping ([Int], [Int]) -> Float)
 	{
 		self.dimensionSizes = dimensionSizes
 		self.nodes = (0 ..< dimensionSizes.reduce(1, *)).map{ _ in (0 ..< outputSize).map{_ in Float.random() * 2 - 1 }}
@@ -118,7 +118,7 @@ class SelfOrganizingMap
 	///
 	/// - Parameter location: Location of the node
 	/// - Returns: The node at the given location
-	final subscript(location: Int...) -> SelfOrganizingMapNode
+	public final subscript(location: Int...) -> SelfOrganizingMapNode
 	{
 		return nodes[index(for: location)]
 	}
@@ -137,7 +137,7 @@ class SelfOrganizingMap
 	///   - totalIterations: Total number of iterations the map will be trained
 	///   - currentIteration: Current training iteration. The neighbourhood size and training rate will be smaller for later iterations.
 	///   - neighbourhoodScale: Scale applied to the neighbourhood.
-	final func update(with sample: Sample, totalIterations: Int, currentIteration: Int, neighbourhoodScale: Float)
+	public final func update(with sample: Sample, totalIterations: Int, currentIteration: Int, neighbourhoodScale: Float)
 	{
 		// determine Best Matching Unit
 		guard let winningPrototypeIndex = nodes.minIndex(by: Array<Any>.compareDistance(sample)) else { return }
@@ -162,7 +162,7 @@ class SelfOrganizingMap
 	///
 	/// - Parameter index: Node array index
 	/// - Returns: Location in map coordinates
-	final func coordinates(`for` index: Int) -> [Int]
+	public final func coordinates(`for` index: Int) -> [Int]
 	{
 		var result: [Int] = []
 		result.reserveCapacity(dimensions)
@@ -183,7 +183,7 @@ class SelfOrganizingMap
 	///
 	/// - Parameter location: Location on the map
 	/// - Returns: Index for the node array
-	final func index(`for` location: [Int]) -> Int
+	public final func index(`for` location: [Int]) -> Int
 	{
 		precondition(location.count == dimensions, "Location coordinates must have same dimensionality as self organizing map.")
 		return zip(location, dimensionSizes).reversed().reduce(0) { $0 * $1.1 + $1.0 }

@@ -26,6 +26,7 @@
 
 import CoreGraphics
 
+import SOMKit
 
 /// A Renderer draws something into a CGContext.
 protocol Renderer

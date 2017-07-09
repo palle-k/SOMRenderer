@@ -28,6 +28,7 @@ import Cocoa
 import CoreGraphics
 import CoreText
 
+import SOMKit
 
 enum ViewMode
 {

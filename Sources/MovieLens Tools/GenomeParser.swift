@@ -27,6 +27,7 @@
 import Foundation
 import Progress
 
+import SOMKit
 
 fileprivate extension String
 {
@@ -44,14 +45,7 @@ fileprivate extension String
 }
 
 
-enum ParserError: Error
-{
-	case invalidType(actual: String, expected: String)
-	case missingData(actual: String, expected: String)
-}
-
-
-struct GenomeParser
+public struct GenomeParser
 {
 	private init(){}
 	
@@ -74,7 +68,7 @@ struct GenomeParser
 	/// - Parameter url: URL to the tags file
 	/// - Returns: A dictionary of IDs and associated tag names
 	/// - Throws: An error, if the data could not be read or if it is in an invalid format.
-	static func parseTags(at url: URL) throws -> [Int: String]
+	public static func parseTags(at url: URL) throws -> [Int: String]
 	{
 		let contents = try String(contentsOf: url)
 		
@@ -124,7 +118,7 @@ struct GenomeParser
 	/// - Parameter url: URL to the scores file
 	/// - Returns: A collection of tuples with item keys, tag keys and associated scores.
 	/// - Throws: An error if the data could not be read of if it is in an invalid format.
-	static func parseScores(at url: URL) throws -> [(movie: Int, tag: Int, score: Float)]
+	public static func parseScores(at url: URL) throws -> [(movie: Int, tag: Int, score: Float)]
 	{
 		let contents = try String(contentsOf: url)
 		
@@ -177,7 +171,7 @@ struct GenomeParser
 	/// - Parameter url: Path to the file of movies.
 	/// - Returns: A dictionary of movie IDs and their associated names
 	/// - Throws: An error, if the file could not be read or if it is in an invalid format.
-	static func parseMovies(at url: URL) throws -> [Int: String]
+	public static func parseMovies(at url: URL) throws -> [Int: String]
 	{
 		let contents = try String(contentsOf: url)
 		
@@ -216,7 +210,7 @@ struct GenomeParser
 	///
 	/// - Parameter scores: A list of item id, tag id, score tuples
 	/// - Returns: A list of item id, score vector tuples.
-	static func generateGenomeScoreMatrix(from scores: [(movie: Int, tag: Int, score: Float)]) -> [(Int, [Float])]
+	public static func generateGenomeScoreMatrix(from scores: [(movie: Int, tag: Int, score: Float)]) -> [(Int, [Float])]
 	{
 		print("Grouping scores...")
 		var scoreVectors: [Int: [Float]] = [:]
@@ -243,7 +237,7 @@ struct GenomeParser
 	///   - columns: Names of columns. If not specified, no header is generated.
 	///   - url: Target URL to which the resulting data is written.
 	/// - Throws: An error, if the data could not be written.
-	static func write(_ rows: [[Any]], columns: [String]? = nil, to url: URL) throws
+	public static func write(_ rows: [[Any]], columns: [String]? = nil, to url: URL) throws
 	{
 		let csv = Progress(rows)
 			.map { row -> String in
@@ -270,7 +264,7 @@ struct GenomeParser
 	/// - Parameter url: URL at which the vector file is located.
 	/// - Returns: A list of samples and their corresponding IDs
 	/// - Throws: An error, if the file could not be written.
-	static func parseMovieVectors(at url: URL) throws -> [(Int, Sample)]
+	public static func parseMovieVectors(at url: URL) throws -> [(Int, Sample)]
 	{
 		let contents = try String(contentsOf: url)
 		

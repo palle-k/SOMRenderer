@@ -7,6 +7,9 @@
 
 import Foundation
 
+import SOMKit
+import MovieLensTools
+
 enum MatchingMethod: String, Codable {
 	case enclosedTags = "enclosed"
 	case similarTags = "similar"

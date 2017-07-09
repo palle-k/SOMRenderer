@@ -28,7 +28,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "SOMRenderer",
+    name: "SOMTools",
     dependencies: [
 		.package(url: "https://github.com/jkandzi/Progress.swift", from: "0.0.0"),
 		.package(url: "https://github.com/kylef/Commander.git", from: "0.0.0"),
@@ -36,6 +36,10 @@ let package = Package(
 		.package(url: "https://github.com/IBM-Swift/Kitura-CORS.git", from: "1.7.0")
 	],
     targets: [
-        .target(name: "SOMRenderer", dependencies: ["Progress", "Commander", "Kitura", "KituraCORS"], path: "Sources")
+		.target(name: "SOMKit", dependencies: ["Progress"], path: "Sources/SOMKit"),
+		.target(name: "MovieLensTools", dependencies: ["Progress", "SOMKit"], path: "Sources/MovieLens Tools"),
+		.target(name: "SOMTrainer", dependencies: ["Progress", "Commander", "SOMKit", "MovieLensTools"], path: "Sources/SOM Trainer"),
+		.target(name: "SOMRenderer", dependencies: ["Progress", "Commander", "SOMKit", "MovieLensTools"], path: "Sources/SOM Renderer"),
+		.target(name: "SOMServer", dependencies: ["Progress", "Commander", "Kitura", "KituraCORS", "SOMKit", "MovieLensTools"], path: "Sources/SOM Server")
     ]
 )

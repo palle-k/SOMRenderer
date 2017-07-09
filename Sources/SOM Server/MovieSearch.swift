@@ -9,6 +9,9 @@ import Foundation
 import Accelerate
 import Progress
 
+import SOMKit
+import MovieLensTools
+
 struct MovieSearchIndex {
 	var tags: [String: Int]
 	var movies: [Int: [String]]
