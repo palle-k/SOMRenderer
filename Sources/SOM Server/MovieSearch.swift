@@ -13,21 +13,43 @@ import SOMKit
 import MovieLensTools
 
 struct MovieSearchIndex {
+	
+	/// Genome Tag names and corresponding Tag IDs
 	var tags: [String: Int]
-	var movies: [Int: [String]]
+	
+	/// Movie IDs and corresponding movie names
+	var movieNames: [Int: String]
+	
+	/// SOM Map indices and associated movies
+	var mapMovieIndex: [Int: [Int]]
+	
+	/// A SOM which was previously trained on a dataset of tags on movies.
 	var map: SelfOrganizingMap
 	
-	init(map: SelfOrganizingMap, movies: [String: Sample], tags: [String: Int]) {
-		self.tags = tags
-		let mapMovieIndices = movies.mapValues { (sample) -> Int in
-			map.nodes.minIndex(by: Array<Any>.compareDistance(sample)) ?? 0
+	
+	/// Creates a new movie search index
+	/// which allows movies to be searched using their location on a SOM
+	///
+	/// - Parameters:
+	///   - map: SOM of tag vectors for movies
+	///   - movieVectors: Tag vectors for movies
+	///   - tags: Tag names for tag IDs
+	///   - movieNames: Names of movies
+	init(map: SelfOrganizingMap, movieVectors: [Int: Sample], tags: [String: Int], movieNames: [Int: String]) {
+		// Maps samples corresponding to movies to the index of the BMU of the map
+		let movieMapIndices = movieVectors.mapValues { sample -> Int in
+			map.nodes.minIndex(by: sample.compareDistance()) ?? 0
 		}
-		self.movies = Dictionary.init(grouping: mapMovieIndices, by: {$0.value}).mapValues { (element) -> [String] in
-			element.map { movie -> String in
+		// Groups movies by the index of the BMU of each movie
+		self.mapMovieIndex = Dictionary(grouping: movieMapIndices, by: {$0.value}).mapValues { groupedMovies -> [Int] in
+			// Strip BMU index from values (as it's already stored as the key)
+			groupedMovies.map { movie -> Int in
 				movie.key
 			}
 		}
+		self.tags = tags
 		self.map = map
+		self.movieNames = movieNames
 	}
 	
 	init(mapURL: URL, tagsURL: URL, movieNamesURL: URL, movieVectorsURL: URL) throws {
@@ -41,24 +63,14 @@ struct MovieSearchIndex {
 		let movies = try GenomeParser.parseMovies(at: movieNamesURL)
 		
 		print("Parsing movie tags...")
-		let movieVectors = try GenomeParser.parseMovieVectors(at: movieVectorsURL)
-		
-		print("Processing movies...")
-		
-		let namedMovieVectors = Progress(movieVectors).flatMap { (movie) -> (String, Sample)? in
-			guard let movieName = movies[movie.0] else {
-				return nil
-			}
-			return (movieName, movie.1)
-		}
-		let movieIndex = Dictionary(uniqueKeysWithValues: namedMovieVectors)
+		let movieIndex = try Dictionary(uniqueKeysWithValues: GenomeParser.parseMovieVectors(at: movieVectorsURL))
 		
 		let tagNames = tags.map({ (element) -> (String, Int) in
 			let (key, value) = element
 			return (value, key - 1)
 		})
 		
-		self.init(map: map, movies: movieIndex, tags: Dictionary(uniqueKeysWithValues: tagNames))
+		self.init(map: map, movieVectors: movieIndex, tags: Dictionary(uniqueKeysWithValues: tagNames), movieNames: movies)
 	}
 }
 
@@ -83,16 +95,16 @@ struct MovieSearchEngine {
 	
 	func findMovies(`for` request: MovieSearchRequest) -> MovieSearchResponse {
 		let tags = request.tags
-		let tagIndices = tags.flatMap { tag -> (tag: Int, priority: Float)? in
+		let tagIndices = tags.flatMap { tag -> (index: Int, priority: Float)? in
 			guard let tagIndex = index.tags[tag.tag] else {
 				return nil
 			}
-			return (tag: tagIndex, priority: tag.priority)
+			return (index: tagIndex, priority: tag.priority)
 		}
 		
 		let nodeScores = tagIndices.reduce(Sample(repeating: 0, count: index.map.nodes.count)) { (partialScores, tag) -> Sample in
 			let tagScores = self.index.map.nodes.map({ node -> Float in
-				node[tag.tag] * tag.priority
+				node[tag.index] * tag.priority
 			})
 			var result = partialScores
 			vDSP_vadd(partialScores, 1, tagScores, 1, &result, 1, UInt(result.count))
@@ -113,14 +125,18 @@ struct MovieSearchEngine {
 			first.element < second.element
 		}.reversed()
 		
-		let results = sortedNodes.flatMap ({ (node) -> [String] in
-			return index.movies[node.offset, default: []]
-		})
+		let selectedMovies = sortedNodes.flatMap { (node) -> [Int] in
+			index.mapMovieIndex[node.offset, default: []]
+		}
+		
+		let selectedMovieNames = selectedMovies.flatMap { (movieID) -> String? in
+			index.movieNames[movieID]
+		}
 		
 		if let count = request.count {
-			return MovieSearchResponse(request: request, movies: Array(results.prefix(count)))
+			return MovieSearchResponse(request: request, movies: Array(selectedMovieNames.prefix(count)))
 		} else {
-			return MovieSearchResponse(request: request, movies: results)
+			return MovieSearchResponse(request: request, movies: selectedMovieNames)
 		}
 	}
 }

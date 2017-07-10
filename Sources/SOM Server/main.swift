@@ -129,6 +129,7 @@ let main = command(
 	router.get("/static", middleware: StaticFileServer())
 	
 	router.get("/") { request, response, next in
+		try response.redirect("/static/index.html")
 		next()
 	}
 	

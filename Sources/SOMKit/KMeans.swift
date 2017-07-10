@@ -46,7 +46,7 @@ class KMeansClusterer
 		
 		for sample in dataset
 		{
-			guard let nearestClusterIndex = clusterCenters.minIndex(by: Array<Any>.compareDistance(sample)) else
+			guard let nearestClusterIndex = clusterCenters.minIndex(by: sample.compareDistance()) else
 			{
 				continue
 			}
@@ -72,7 +72,7 @@ class KMeansClusterer
 	func samples(`for` clusterIndex: Int) -> [Sample]
 	{
 		return dataset.filter { sample -> Bool in
-			guard let nearestClusterIndex = clusterCenters.minIndex(by: Array<Any>.compareDistance(sample)) else
+			guard let nearestClusterIndex = clusterCenters.minIndex(by: sample.compareDistance()) else
 			{
 				return false
 			}

@@ -140,7 +140,7 @@ public class SelfOrganizingMap
 	public final func update(with sample: Sample, totalIterations: Int, currentIteration: Int, neighbourhoodScale: Float)
 	{
 		// determine Best Matching Unit
-		guard let winningPrototypeIndex = nodes.minIndex(by: Array<Any>.compareDistance(sample)) else { return }
+		guard let winningPrototypeIndex = nodes.minIndex(by: sample.compareDistance()) else { return }
 		let winningPrototypeCoordinates = coordinates(for: winningPrototypeIndex)
 		
 		// Calculating neighbourhood scaling factors

@@ -90,25 +90,25 @@ struct SOMUMatrixRenderer: Renderer
             if index[0] > 0
             {
                 let neighbour = self.map[index[0]-1, index[1]]
-                distanceSum += Array<Any>.distance(from: node, to: neighbour)
+                distanceSum += node.distance(to: neighbour)
                 nodeCount += 1
             }
             if index[1] > 0
             {
                 let neighbour = self.map[index[0], index[1]-1]
-                distanceSum += Array<Any>.distance(from: node, to: neighbour)
+                distanceSum += node.distance(to: neighbour)
                 nodeCount += 1
             }
             if index[0] + 1 < self.map.dimensionSizes[0]
             {
                 let neighbour = self.map[index[0]+1, index[1]]
-                distanceSum += Array<Any>.distance(from: node, to: neighbour)
+                distanceSum += node.distance(to: neighbour)
                 nodeCount += 1
             }
             if index[1] + 1 < self.map.dimensionSizes[1]
             {
                 let neighbour = self.map[index[0], index[1]+1]
-                distanceSum += Array<Any>.distance(from: node, to: neighbour)
+                distanceSum += node.distance(to: neighbour)
                 nodeCount += 1
             }
             
@@ -128,7 +128,7 @@ struct SOMUMatrixRenderer: Renderer
             
             for sample in dataset
             {
-                if let nearestIndex = map.nodes.minIndex(by: Array<Any>.compareDistance(sample))
+                if let nearestIndex = map.nodes.minIndex(by: sample.compareDistance())
                 {
                     densities[nearestIndex] += 1
                 }

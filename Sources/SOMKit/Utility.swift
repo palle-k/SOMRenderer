@@ -27,9 +27,10 @@
 import Accelerate
 import Progress
 
-public extension Array {
-	public static func distanceSq(from: [Float], to: [Float]) -> Float {
-		precondition(from.count == to.count, "Vectors must have equal dimension.")
+public extension Array where Element == Float {
+	
+	public func distanceSq(to: [Element]) -> Element {
+		precondition(self.count == to.count, "Vectors must have equal dimension.")
 		var result: Float = 0
 		
 //		let temp = UnsafeMutablePointer<Float>.allocate(capacity: from.count)
@@ -37,18 +38,17 @@ public extension Array {
 //		vDSP_vsub(from, 1, to, 1, temp, 1, vDSP_Length(from.count))
 //		vDSP_svemg(temp, 1, &result, vDSP_Length(from.count))
 		
-		vDSP_distancesq(from, 1, to, 1, &result, vDSP_Length(from.count))
+		vDSP_distancesq(self, 1, to, 1, &result, vDSP_Length(self.count))
 		return result // * result
 	}
 	
-	static func distance(from: [Float], to: [Float]) -> Float {
-		return sqrt(distanceSq(from: from, to: to))
+	public func distance(to: [Element]) -> Float {
+		return sqrt(self.distanceSq(to: to))
 	}
 	
-	static func compareDistance(_ reference: [Float]) -> ([Float],[Float]) -> Bool {
-		return {
-			(_ first: [Float], _ second: [Float]) in
-			return distanceSq(from: reference, to: first) < distanceSq(from: reference, to: second)
+	public func compareDistance() -> ([Float],[Float]) -> Bool {
+		return { (_ first: [Float], _ second: [Float]) in
+			return self.distanceSq(to: first) < self.distanceSq(to: second)
 		}
 	}
 }
@@ -211,7 +211,6 @@ public extension String {
 		self = path
 	}
 }
-
 
 public enum ParserError: Error
 {
