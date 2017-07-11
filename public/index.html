@@ -73,6 +73,13 @@
 			padding-bottom: 20px;
 			padding-left: 20px;
 			margin-left: 0;
+			border-radius: 3px;
+			transition: box-shadow 0.2s ease;
+			cursor: pointer;
+		}
+
+		#result_list li:hover {
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 		}
 
 		#result_list li img {
@@ -157,7 +164,7 @@
 			});
 			let movieRequestBody = {
 				tags: queryElements,
-				count: 10
+				count: 30
 			};
 			let tagRequestBody = {
 				tags: queryElements.map(tag => tag.tag),
@@ -198,6 +205,7 @@
 								element.appendChild(wrapper);
 							});
 
+						element.addEventListener('click', (event) => window.open("https://www.imdb.com/title/tt" + movie.imdb_id, '_blank'));
 
 						return element;
 					}).forEach(element => resultList.appendChild(element));
@@ -224,6 +232,8 @@
 							document.getElementById('query_field').value = newText;
 							search();
 						};
+
+
 						return element;
 					}).forEach(element => {
 						tagList.appendChild(element);

@@ -32,6 +32,8 @@ import Commander
 import Kitura
 import KituraNet
 import KituraCORS
+import KituraCache
+
 import OpenGraph
 
 import SOMKit
@@ -129,11 +131,24 @@ let main = command(
 		try response.send(result)
 	}
 	
+	let cache = KituraCache(defaultTTL: 3600, checkFrequency: 180)
+	
 	router.get("/info/:id") { request, response, next in
 		
 		guard let imdbID = request.parameters["id"] else {
 			response.statusCode = HTTPStatusCode.badRequest
 			response.send("Error 400: No Query.")
+			next()
+			return
+		}
+		
+		struct MovieInfoResponse: Codable {
+			let cover: String
+			let description: String
+		}
+		
+		if let responseData = cache.object(forKey: imdbID) as? MovieInfoResponse {
+			try response.send(responseData)
 			next()
 			return
 		}
@@ -153,11 +168,6 @@ let main = command(
 				return
 			}
 			
-			struct MovieInfoResponse: Codable {
-				let cover: String
-				let description: String
-			}
-			
 			guard let cover = result[.image], let description = result[.description] else {
 				response.statusCode = HTTPStatusCode.badRequest
 				response.send("Error 500: Could not load data.")
@@ -173,6 +183,8 @@ let main = command(
 				response.send("Error 500: Could not load data.")
 			}
 			next()
+			
+			cache.setObject(responseData, forKey: imdbID)
 		})
 	}
 	

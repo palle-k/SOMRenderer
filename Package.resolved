@@ -56,6 +56,15 @@
         }
       },
       {
+        "package": "KituraCache",
+        "repositoryURL": "https://github.com/IBM-Swift/Kitura-Cache.git",
+        "state": {
+          "branch": null,
+          "revision": "564fe65bd1488d727cd1a4f105ad2324617f8053",
+          "version": "1.7.0"
+        }
+      },
+      {
         "package": "LoggerAPI",
         "repositoryURL": "https://github.com/IBM-Swift/LoggerAPI.git",
         "state": {
