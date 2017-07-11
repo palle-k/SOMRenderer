@@ -32,6 +32,7 @@ import Commander
 import Kitura
 import KituraNet
 import KituraCORS
+import OpenGraph
 
 import SOMKit
 import MovieLensTools
@@ -53,6 +54,7 @@ let main = command(
 	Argument("tags", description: "Path to a CSV file containing names for the features of the dataset", validator: String.init(validateExisting: )),
 	Argument("movie-names", description: "Path to a CSV file containing names of movies", validator: String.init(validateExisting: )),
 	Argument("movie-vectors", description: "Path to the movie tag vector file", validator: String.init(validateExisting: )),
+	Argument("links", description: "Path to the links CSV file containing the IMDB and TMDB IDs of movies", validator: String.init(validateExisting: )),
 	Option("port", 8000, flag: "p", description: "The TCP port on which the server should run", validator: { port in
 		if port <= 0 {
 			throw ValidationError(description: "Port must be greater than 0.")
@@ -60,13 +62,14 @@ let main = command(
 			return port
 		}
 	})
-) { mapFilePath, tagsFilePath, movieNamesFilePath, movieVectorsFilePath, port in
+) { mapFilePath, tagsFilePath, movieNamesFilePath, movieVectorsFilePath, linksFilePath, port in
 	let tagsURL = URL(fileURLWithPath: tagsFilePath)
 	let mapURL = URL(fileURLWithPath: mapFilePath)
 	let movieNamesURL = URL(fileURLWithPath: movieNamesFilePath)
 	let movieVectorsURL = URL(fileURLWithPath: movieVectorsFilePath)
+	let linksURL = URL(fileURLWithPath: linksFilePath)
 	
-	let movieSearchIndex = try MovieSearchIndex(mapURL: mapURL, tagsURL: tagsURL, movieNamesURL: movieNamesURL, movieVectorsURL: movieVectorsURL)
+	let movieSearchIndex = try MovieSearchIndex(mapURL: mapURL, tagsURL: tagsURL, movieNamesURL: movieNamesURL, movieVectorsURL: movieVectorsURL, linksURL: linksURL)
 	let movieSearchEngine = MovieSearchEngine(index: movieSearchIndex)
 	
 	let tagSearchEngine = try TagSearchEngine(mapURL: mapURL, tagsURL: tagsURL)
@@ -124,6 +127,53 @@ let main = command(
 		
 		let result = tagSearchEngine.similarTags(for: query)
 		try response.send(result)
+	}
+	
+	router.get("/info/:id") { request, response, next in
+		
+		guard let imdbID = request.parameters["id"] else {
+			response.statusCode = HTTPStatusCode.badRequest
+			response.send("Error 400: No Query.")
+			next()
+			return
+		}
+		
+		guard let url = URL(string: "https://www.imdb.com/title/tt\(imdbID)") else {
+			response.statusCode = HTTPStatusCode.badRequest
+			response.send("Error 400: Invalid query.")
+			next()
+			return
+		}
+		
+		OpenGraph.fetch(url: url, completion: { result, error in
+			guard let result = result else {
+				response.statusCode = HTTPStatusCode.badRequest
+				response.send("Error 500: Could not load data.")
+				next()
+				return
+			}
+			
+			struct MovieInfoResponse: Codable {
+				let cover: String
+				let description: String
+			}
+			
+			guard let cover = result[.image], let description = result[.description] else {
+				response.statusCode = HTTPStatusCode.badRequest
+				response.send("Error 500: Could not load data.")
+				next()
+				return
+			}
+			
+			let responseData = MovieInfoResponse(cover: cover, description: description)
+			do {
+				try response.send(responseData)
+			} catch {
+				response.statusCode = HTTPStatusCode.badRequest
+				response.send("Error 500: Could not load data.")
+			}
+			next()
+		})
 	}
 	
 	router.get("/static", middleware: StaticFileServer())

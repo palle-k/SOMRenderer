@@ -26,6 +26,8 @@ struct MovieSearchIndex {
 	/// A SOM which was previously trained on a dataset of tags on movies.
 	var map: SelfOrganizingMap
 	
+	// The IMDB ID and TMDB ID for a MovieLens ID
+	var movieLinks: [Int: (String, String)]
 	
 	/// Creates a new movie search index
 	/// which allows movies to be searched using their location on a SOM
@@ -35,11 +37,17 @@ struct MovieSearchIndex {
 	///   - movieVectors: Tag vectors for movies
 	///   - tags: Tag names for tag IDs
 	///   - movieNames: Names of movies
-	init(map: SelfOrganizingMap, movieVectors: [Int: Sample], tags: [String: Int], movieNames: [Int: String]) {
+	init(map: SelfOrganizingMap, movieVectors: [Int: Sample], tags: [String: Int], movieNames: [Int: String], links: [Int: (String, String)]) {
+		
+		print("Mapping movies to map...")
+		var bar = ProgressBar(count: movieVectors.count)
+		
 		// Maps samples corresponding to movies to the index of the BMU of the map
 		let movieMapIndices = movieVectors.mapValues { sample -> Int in
-			map.nodes.minIndex(by: sample.compareDistance()) ?? 0
+			bar.next()
+			return map.nodes.minIndex(by: sample.compareDistance()) ?? 0
 		}
+		
 		// Groups movies by the index of the BMU of each movie
 		self.mapMovieIndex = Dictionary(grouping: movieMapIndices, by: {$0.value}).mapValues { groupedMovies -> [Int] in
 			// Strip BMU index from values (as it's already stored as the key)
@@ -50,9 +58,10 @@ struct MovieSearchIndex {
 		self.tags = tags
 		self.map = map
 		self.movieNames = movieNames
+		self.movieLinks = links
 	}
 	
-	init(mapURL: URL, tagsURL: URL, movieNamesURL: URL, movieVectorsURL: URL) throws {
+	init(mapURL: URL, tagsURL: URL, movieNamesURL: URL, movieVectorsURL: URL, linksURL: URL) throws {
 		print("Parsing map...")
 		let map = try SelfOrganizingMap(contentsOf: mapURL)
 		
@@ -65,12 +74,15 @@ struct MovieSearchIndex {
 		print("Parsing movie tags...")
 		let movieIndex = try Dictionary(uniqueKeysWithValues: GenomeParser.parseMovieVectors(at: movieVectorsURL))
 		
+		print("Parsing links...")
+		let links = try GenomeParser.parseLinks(at: linksURL)
+		
 		let tagNames = tags.map({ (element) -> (String, Int) in
 			let (key, value) = element
 			return (value, key - 1)
 		})
 		
-		self.init(map: map, movieVectors: movieIndex, tags: Dictionary(uniqueKeysWithValues: tagNames), movieNames: movies)
+		self.init(map: map, movieVectors: movieIndex, tags: Dictionary(uniqueKeysWithValues: tagNames), movieNames: movies, links: links)
 	}
 }
 
@@ -85,9 +97,23 @@ struct MovieSearchRequest: Codable {
 	let count: Int?
 }
 
+struct Movie: Codable {
+	let id: Int
+	let title: String
+	let imdbID: String
+	let tmdbID: String
+	
+	private enum CodingKeys: String, CodingKey {
+		case id
+		case title
+		case imdbID = "imdb_id"
+		case tmdbID = "tmdb_id"
+	}
+}
+
 struct MovieSearchResponse: Codable {
 	let request: MovieSearchRequest
-	let movies: [String]
+	let movies: [Movie]
 }
 
 struct MovieSearchEngine {
@@ -125,18 +151,24 @@ struct MovieSearchEngine {
 			first.element < second.element
 		}.reversed()
 		
-		let selectedMovies = sortedNodes.flatMap { (node) -> [Int] in
+		let selectedMovieIDs = sortedNodes.flatMap { node -> [Int] in
 			index.mapMovieIndex[node.offset, default: []]
 		}
 		
-		let selectedMovieNames = selectedMovies.flatMap { (movieID) -> String? in
-			index.movieNames[movieID]
+		let selectedMovies = selectedMovieIDs.flatMap { movieID -> Movie? in
+			guard let (imdbID, tmdbID) = index.movieLinks[movieID] else {
+				return nil
+			}
+			guard let title = index.movieNames[movieID] else {
+				return nil
+			}
+			return Movie(id: movieID, title: title, imdbID: imdbID, tmdbID: tmdbID)
 		}
 		
 		if let count = request.count {
-			return MovieSearchResponse(request: request, movies: Array(selectedMovieNames.prefix(count)))
+			return MovieSearchResponse(request: request, movies: Array(selectedMovies.prefix(count)))
 		} else {
-			return MovieSearchResponse(request: request, movies: selectedMovieNames)
+			return MovieSearchResponse(request: request, movies: selectedMovies)
 		}
 	}
 }

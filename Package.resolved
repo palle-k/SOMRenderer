@@ -65,6 +65,15 @@
         }
       },
       {
+        "package": "OpenGraph",
+        "repositoryURL": "https://github.com/palle-k/OpenGraph.git",
+        "state": {
+          "branch": null,
+          "revision": "c9550013219b148587f4bd7db42feef0c132e904",
+          "version": "1.0.3"
+        }
+      },
+      {
         "package": "Progress",
         "repositoryURL": "https://github.com/jkandzi/Progress.swift",
         "state": {

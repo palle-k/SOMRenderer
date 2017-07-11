@@ -75,6 +75,22 @@
 			margin-left: 0;
 		}
 
+		#result_list li img {
+			height: 300px;
+			display: inline-block;
+		}
+
+		#result_list li div {
+			margin-left: 20px;
+			display: inline-block;
+			width: calc(95% - 200px);
+			vertical-align: top;
+		}
+
+		#result_list li div h2 {
+			margin-top: 0px;
+		}
+
 		#tag_list_title {
 			color: rgba(0, 0, 0, 0.5);
 			display: none;
@@ -141,7 +157,7 @@
 			});
 			let movieRequestBody = {
 				tags: queryElements,
-				count: 100
+				count: 10
 			};
 			let tagRequestBody = {
 				tags: queryElements.map(tag => tag.tag),
@@ -149,16 +165,9 @@
 				count: 10
 			};
 
-			(() => {
-				let request = new XMLHttpRequest();
-				request.open("GET", "/movies/" + encodeURIComponent(JSON.stringify(movieRequestBody)), true);
-				request.onreadystatechange = () => {
-					if (request.readyState !== 4) {
-						return;
-					}
-
-					let response = JSON.parse(request.responseText);
-
+			fetch("/movies/" + encodeURIComponent(JSON.stringify(movieRequestBody)))
+				.then(response => response.json())
+				.then(response => {
 					let resultList = document.getElementById('result_list');
 					while (resultList.firstChild) {
 						resultList.removeChild(resultList.firstChild);
@@ -166,23 +175,37 @@
 
 					response.movies.map(movie => {
 						let element = document.createElement('li');
-						element.innerText = movie;
+						element.innerText = movie.title;
+
+						fetch("/info/" + movie.imdb_id)
+							.then(response => response.json())
+							.then(response => {
+								element.innerText = "";
+
+								let img = document.createElement('img');
+								img.src = response.cover;
+								element.appendChild(img);
+
+								let title = document.createElement('h2');
+								title.innerText = movie.title;
+
+								let description = document.createElement('p');
+								description.innerText = response.description;
+
+								let wrapper = document.createElement('div');
+								wrapper.appendChild(title);
+								wrapper.appendChild(description);
+								element.appendChild(wrapper);
+							});
+
+
 						return element;
 					}).forEach(element => resultList.appendChild(element));
-				};
-				request.send();
-			})();
+				});
 
-			(() => {
-				let request = new XMLHttpRequest();
-				request.open("GET", "/tags/" + encodeURIComponent(JSON.stringify(tagRequestBody)), true);
-				request.onreadystatechange = () => {
-					if (request.readyState !== 4) {
-						return;
-					}
-
-					let response = JSON.parse(request.responseText);
-
+			fetch("/tags/" + encodeURIComponent(JSON.stringify(tagRequestBody)))
+				.then(response => response.json())
+				.then(response => {
 					let tagList = document.getElementById('tag_list');
 					while (tagList.firstChild) {
 						tagList.removeChild(tagList.firstChild);
@@ -206,9 +229,7 @@
 						tagList.appendChild(element);
 					});
 					document.getElementById('tag_list_title').style.display = "block";
-				};
-				request.send();
-			})();
+				});
 
 		}
 
@@ -222,19 +243,19 @@
 	</script>
 </head>
 <body>
-	<h1>SOM Movie API</h1>
-	<input id="query_field" onkeyup="searchfield_handle(event)" type="text" placeholder="Enter Query String (action, -science fiction, +aliens, ...)" autocomplete="off" autofocus>
-	<button id="query_button" onclick="search()">Search</button>
-	<p id="tag_list_title">Similar tags:</p>
-	<ul id="tag_list">
+<h1>SOM Movie API</h1>
+<input id="query_field" onkeyup="searchfield_handle(event)" type="text" placeholder="Enter Query String (action, -science fiction, +aliens, ...)" autocomplete="off" autofocus>
+<button id="query_button" onclick="search()">Search</button>
+<p id="tag_list_title">Similar tags:</p>
+<ul id="tag_list">
 
-	</ul>
-	<ul id="result_list">
+</ul>
+<ul id="result_list">
 
-	</ul>
-	<footer>
-		&copy; 2017 Palle Klewitz<br>
-		<a href="https://github.com/palle-k/SOMRenderer">SOMRenderer on GitHub</a>
-	</footer>
+</ul>
+<footer>
+	&copy; 2017 Palle Klewitz<br>
+	<a href="https://github.com/palle-k/SOMRenderer">SOMRenderer on GitHub</a>
+</footer>
 </body>
 </html>

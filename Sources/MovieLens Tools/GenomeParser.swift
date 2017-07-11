@@ -29,14 +29,11 @@ import Progress
 
 import SOMKit
 
-fileprivate extension String
-{
-	func allOccurences(of term: String) -> [Index]
-	{
+fileprivate extension String {
+	func allOccurences(of term: String) -> [Index] {
 		var occurences: [Index] = []
 		
-		while let range = self.range(of: term, range: (occurences.last.map({self.index(after: $0)}) ?? self.startIndex) ..< self.endIndex)
-		{
+		while let range = self.range(of: term, range: (occurences.last.map({self.index(after: $0)}) ?? self.startIndex) ..< self.endIndex) {
 			occurences.append(range.lowerBound)
 		}
 		
@@ -45,10 +42,8 @@ fileprivate extension String
 }
 
 
-public struct GenomeParser
-{
+public struct GenomeParser {
 	private init(){}
-	
 	
 	/// Parses a CSV file of tag ids and names.
 	///
@@ -68,36 +63,25 @@ public struct GenomeParser
 	/// - Parameter url: URL to the tags file
 	/// - Returns: A dictionary of IDs and associated tag names
 	/// - Throws: An error, if the data could not be read or if it is in an invalid format.
-	public static func parseTags(at url: URL) throws -> [Int: String]
-	{
+	public static func parseTags(at url: URL) throws -> [Int: String] {
 		let contents = try String(contentsOf: url)
-		
-		let lines = Array(contents.components(separatedBy: .newlines).filter{!$0.isEmpty}.dropFirst())
+		let lines = contents.components(separatedBy: .newlines).filter{!$0.isEmpty}.dropFirst()
 		
 		let tags = try lines.map { line -> (Int, String) in
 			let columns = line.components(separatedBy: ",")
 			
-			guard columns.count >= 2 else
-			{
+			guard columns.count >= 2 else {
 				throw ParserError.missingData(actual: line, expected: "Expected at least two columns: ID,NAME")
 			}
 			
-			guard let id = Int(columns[0]) else
-			{
+			guard let id = Int(columns[0]) else {
 				throw ParserError.invalidType(actual: columns[0], expected: "Int")
 			}
 			
 			return (id, columns[1])
 		}
 		
-		var dict: [Int: String] = [:]
-		
-		for (id, name) in tags
-		{
-			dict[id] = name
-		}
-		
-		return dict
+		return Dictionary(uniqueKeysWithValues: tags)
 	}
 	
 	
@@ -118,8 +102,7 @@ public struct GenomeParser
 	/// - Parameter url: URL to the scores file
 	/// - Returns: A collection of tuples with item keys, tag keys and associated scores.
 	/// - Throws: An error if the data could not be read of if it is in an invalid format.
-	public static func parseScores(at url: URL) throws -> [(movie: Int, tag: Int, score: Float)]
-	{
+	public static func parseScores(at url: URL) throws -> [(movie: Int, tag: Int, score: Float)] {
 		let contents = try String(contentsOf: url)
 		
 		let lines = contents.components(separatedBy: .newlines).lazy.filter{!$0.isEmpty}.dropFirst()
@@ -127,23 +110,19 @@ public struct GenomeParser
 		let scores = try lines.map { line -> (Int, Int, Float) in
 			let columns = line.components(separatedBy: ",")
 			
-			guard columns.count >= 2 else
-			{
+			guard columns.count >= 2 else {
 				throw ParserError.missingData(actual: line, expected: "At least three columns: ID,TAGID,NAME")
 			}
 			
-			guard let movieID = Int(columns[0]) else
-			{
+			guard let movieID = Int(columns[0]) else {
 				throw ParserError.invalidType(actual: columns[0], expected: "Int")
 			}
 			
-			guard let tagID = Int(columns[1]) else
-			{
+			guard let tagID = Int(columns[1]) else {
 				throw ParserError.invalidType(actual: columns[1], expected: "Int")
 			}
 			
-			guard let score = Float(columns[2]) else
-			{
+			guard let score = Float(columns[2]) else {
 				throw ParserError.invalidType(actual: columns[3], expected: "Float")
 			}
 			
@@ -171,36 +150,46 @@ public struct GenomeParser
 	/// - Parameter url: Path to the file of movies.
 	/// - Returns: A dictionary of movie IDs and their associated names
 	/// - Throws: An error, if the file could not be read or if it is in an invalid format.
-	public static func parseMovies(at url: URL) throws -> [Int: String]
-	{
+	public static func parseMovies(at url: URL) throws -> [Int: String] {
 		let contents = try String(contentsOf: url)
-		
-		let lines = Array(contents.components(separatedBy: .newlines).filter{!$0.isEmpty}.dropFirst())
+		let lines = contents.components(separatedBy: .newlines).filter{!$0.isEmpty}.dropFirst()
 		
 		let tags = try lines.map { line -> (Int, String) in
 			let columns = line.components(separatedBy: ",")
 			
-			guard columns.count >= 3 else
-			{
+			guard columns.count >= 3 else {
 				throw ParserError.missingData(actual: line, expected: "At least three columns: ID,NAME,GENRES")
 			}
 			
-			guard let id = Int(columns[0]) else
-			{
+			guard let id = Int(columns[0]) else {
 				throw ParserError.invalidType(actual: columns[0], expected: "Int")
 			}
 			
 			return (id, Array(columns[1..<(columns.endIndex-1)]).joined(separator: ","))
 		}
 		
-		var dict: [Int: String] = [:]
+		return Dictionary(uniqueKeysWithValues: tags)
+	}
+	
+	public static func parseLinks(at url: URL) throws -> [Int: (String, String)] {
+		let contents = try String(contentsOf: url)
+		let lines = contents.components(separatedBy: .newlines).filter{!$0.isEmpty}.dropFirst()
 		
-		for (id, name) in tags
-		{
-			dict[id] = name
+		let rows = try Progress(lines).map { line -> (Int, (String, String)) in
+			let columns = line.components(separatedBy: ",")
+			
+			guard columns.count >= 3 else {
+				throw ParserError.missingData(actual: line, expected: "At least three columns: MLID,IMDBID,TMDBID")
+			}
+			
+			guard let movieLensID = Int(columns[0]) else {
+				throw ParserError.invalidType(actual: columns[0], expected: "Int")
+			}
+			
+			return (movieLensID, (columns[1], columns[2]))
 		}
 		
-		return dict
+		return Dictionary(uniqueKeysWithValues: rows)
 	}
 	
 	
@@ -210,13 +199,11 @@ public struct GenomeParser
 	///
 	/// - Parameter scores: A list of item id, tag id, score tuples
 	/// - Returns: A list of item id, score vector tuples.
-	public static func generateGenomeScoreMatrix(from scores: [(movie: Int, tag: Int, score: Float)]) -> [(Int, [Float])]
-	{
+	public static func generateGenomeScoreMatrix(from scores: [(movie: Int, tag: Int, score: Float)]) -> [(Int, [Float])] {
 		print("Grouping scores...")
 		var scoreVectors: [Int: [Float]] = [:]
 		
-		for (movie, tagID, score) in Progress(scores)
-		{
+		for (movie, tagID, score) in Progress(scores) {
 			assert(
 				(scoreVectors[movie] ?? []).count == tagID,
 				"Invalid tagID (\((scoreVectors[movie] ?? []).count) expected, actual: \(tagID))"
@@ -237,8 +224,7 @@ public struct GenomeParser
 	///   - columns: Names of columns. If not specified, no header is generated.
 	///   - url: Target URL to which the resulting data is written.
 	/// - Throws: An error, if the data could not be written.
-	public static func write(_ rows: [[Any]], columns: [String]? = nil, to url: URL) throws
-	{
+	public static func write(_ rows: [[Any]], columns: [String]? = nil, to url: URL) throws {
 		let csv = Progress(rows)
 			.map { row -> String in
 				return row.map{ "\($0)" }.joined(separator: ",")
@@ -264,10 +250,8 @@ public struct GenomeParser
 	/// - Parameter url: URL at which the vector file is located.
 	/// - Returns: A list of samples and their corresponding IDs
 	/// - Throws: An error, if the file could not be written.
-	public static func parseMovieVectors(at url: URL) throws -> [(Int, Sample)]
-	{
+	public static func parseMovieVectors(at url: URL) throws -> [(Int, Sample)] {
 		let contents = try String(contentsOf: url)
-		
 		let lines = contents.components(separatedBy: .newlines).filter{!$0.isEmpty}
 		
 		return Progress(lines).map { line -> (Int, Sample) in
