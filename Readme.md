@@ -3,7 +3,7 @@
 <img src="Maps.png" alt="Component Planes showing the distribution of SciFi, Cyborgs and Black and White movies" />
 
 This Package contains the code used to generate visualizations of Kohonen Self-Organizing Maps
-used on the MovieLens Dataset.
+used on the MovieLens Dataset and find movies and similar tags for queries of preferred and non-preferred tags made by users.
 
 # Usage
 
