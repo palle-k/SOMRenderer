@@ -1,4 +1,4 @@
-# SOM Renderer
+# Kohonen Self-Organizing Maps for Visualizations and Tag based Search on the MovieLens DataSet
 
 <img src="Maps.png" alt="Component Planes showing the distribution of SciFi, Cyborgs and Black and White movies" />
 
