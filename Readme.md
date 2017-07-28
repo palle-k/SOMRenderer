@@ -51,6 +51,14 @@ A HTTP server responds to GET requests on /movies/:query and /tags/:query, where
 ./.build/release/SOMServer <som-filepath> <genome-tags-filepath> <movies-filepath> <joined-movies-scores-filepath> <links-csv-filepath>
 ```
 
+### Generating visualizations of the training process of a Self-Organizing Map
+
+```
+./.build/release/SOMTrainingVisualizer <step> <iterations> <output-filepath>
+```
+
+Renders every `step`-iteration of the training phase of a Self-Organizing Map on a two-dimensional uniformly distributed data set into a PDF file.
+
 # References
 
 - F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets: History and Context. ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4, Article 19 (December 2015), 19 pages. DOI=http://dx.doi.org/10.1145/2827872

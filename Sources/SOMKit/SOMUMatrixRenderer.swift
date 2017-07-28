@@ -28,9 +28,7 @@ import Cocoa
 import CoreGraphics
 import CoreText
 
-import SOMKit
-
-enum ViewMode
+public enum ViewMode
 {
     case distance
     case feature(index: Int)
@@ -38,15 +36,15 @@ enum ViewMode
 }
 
 
-struct SOMUMatrixRenderer: Renderer
+public struct SOMUMatrixRenderer: Renderer
 {
-    let map: SelfOrganizingMap
-    var viewMode: ViewMode
+    public let map: SelfOrganizingMap
+    public var viewMode: ViewMode
     
-    var drawsScale: Bool
-    var title: String?
+    public var drawsScale: Bool
+    public var title: String?
     
-    init(map: SelfOrganizingMap, mode: ViewMode)
+    public init(map: SelfOrganizingMap, mode: ViewMode)
     {
         self.map = map
         self.viewMode = mode
@@ -54,7 +52,7 @@ struct SOMUMatrixRenderer: Renderer
         self.title = nil
     }
     
-    var aspectRatio: CGFloat
+    public var aspectRatio: CGFloat
     {
         let width = (Float(map.dimensionSizes[0]) + 0.5) * sqrt(3)
         let height = (Float(map.dimensionSizes[1]) + 1 / 3) * 3 / 2
@@ -62,7 +60,7 @@ struct SOMUMatrixRenderer: Renderer
         return CGFloat(width / height)
     }
     
-    func estimatedHeight(`for` width: CGFloat) -> CGFloat
+    public func estimatedHeight(`for` width: CGFloat) -> CGFloat
     {
         let mapWidth = CGFloat((Float(map.dimensionSizes[0]) + 0.5) * sqrt(3))
         let mapHeight = CGFloat((Float(map.dimensionSizes[1]) + 1 / 3) * 3 / 2)
@@ -70,7 +68,7 @@ struct SOMUMatrixRenderer: Renderer
         return width * mapHeight / mapWidth + (drawsScale ? 40 : 0) + (title != nil ? 30 : 0)
     }
     
-    func render(`in` context: CGContext, size: CGSize)
+    public func render(`in` context: CGContext, size: CGSize)
     {
         let horizontalScale = size.width / ((CGFloat(map.dimensionSizes[0]) + 0.5) * sqrt(3))
         
@@ -183,15 +181,15 @@ struct SOMUMatrixRenderer: Renderer
             context.clip(to: CGRect(x: 0, y: 0, width: 200, height: 20))
             
             let colors: [CGColor]
-            let locations = 100.map{CGFloat($0) / 99}
+            let locations = (0..<100).map{CGFloat($0) / 99}
             
             switch self.viewMode
             {
             case .distance:
-                colors = 100.map{CGColor(gray: 1 - CGFloat($0) / 99, alpha: 1)}
+                colors = (0..<100).map{CGColor(gray: 1 - CGFloat($0) / 99, alpha: 1)}
                 
             case .feature(index: _), .density(dataset: _):
-                colors = 100.map{NSColor(hue: (1 - CGFloat($0) / 99) * 2 / 3, saturation: 1, brightness: 1, alpha: 1).cgColor}
+                colors = (0..<100).map{NSColor(hue: (1 - CGFloat($0) / 99) * 2 / 3, saturation: 1, brightness: 1, alpha: 1).cgColor}
             }
             
             let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors as CFArray, locations: locations)!
@@ -252,9 +250,9 @@ struct SOMUMatrixRenderer: Renderer
     }
 }
 
-extension CGContext
+public extension CGContext
 {
-    func addHexagon(at center: CGPoint, radius: CGFloat, rotation: CGFloat = 0)
+    public func addHexagon(at center: CGPoint, radius: CGFloat, rotation: CGFloat = 0)
     {
         self.beginPath()
         for vertexIndex in 0 ... 5

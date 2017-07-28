@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/Kitura-net.git",
         "state": {
           "branch": null,
-          "revision": "dc135bc49fbf1023cd09354a5eb642eb21584280",
-          "version": "1.7.13"
+          "revision": "b5c3b26321964978abb3b03230684a347a00a4b7",
+          "version": "1.7.15"
         }
       },
       {

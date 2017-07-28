@@ -29,23 +29,35 @@ import Progress
 
 public extension Array where Element == Float {
 	
+	/// Computes the squared euclidean distance between the vector `self` and the vector `to`.
+	/// Both vectors must equal dimensionality
+	///
+	/// - Parameter to: Vector to which the distance should be computed
+	/// - Returns: The squared euclidean distance between two vectors.
 	public func distanceSq(to: [Element]) -> Element {
 		precondition(self.count == to.count, "Vectors must have equal dimension.")
 		var result: Float = 0
-		
-//		let temp = UnsafeMutablePointer<Float>.allocate(capacity: from.count)
-//		defer { temp.deallocate(capacity: from.count) }
-//		vDSP_vsub(from, 1, to, 1, temp, 1, vDSP_Length(from.count))
-//		vDSP_svemg(temp, 1, &result, vDSP_Length(from.count))
-		
 		vDSP_distancesq(self, 1, to, 1, &result, vDSP_Length(self.count))
 		return result // * result
 	}
 	
+	/// Computes the euclidean distance between the vector `self` and the vector `to`.
+	/// Both vectors must equal dimensionality
+	///
+	/// - Parameter to: Vector to which the distance should be computed
+	/// - Returns: The euclidean distance between two vectors.
 	public func distance(to: [Element]) -> Float {
 		return sqrt(self.distanceSq(to: to))
 	}
 	
+	
+	/// Returns a function which compares the euclidean distance of two input vectors
+	/// to the distance of the vector `self`.
+	///
+	/// The returned function returns true, if the first input vector is closer to
+	/// the vector `self` than the second input vector.
+	///
+	/// - Returns: A distance comparator function
 	public func compareDistance() -> ([Float],[Float]) -> Bool {
 		return { (_ first: [Float], _ second: [Float]) in
 			return self.distanceSq(to: first) < self.distanceSq(to: second)
@@ -53,59 +65,71 @@ public extension Array where Element == Float {
 	}
 }
 
-public extension Array {
+public extension Collection where Index == Int {
+	
+	/// Returns the index for the element which a comparator function determined to be the smallest.
+	///
+	/// - Parameter compare: Comparator function
+	/// - Returns: Index of the smallest element in the collection
+	/// - Throws: An error if the comparator function throws an error
 	public func minIndex(by compare: @escaping (Element, Element) throws -> Bool) rethrows -> Int? {
 		return try self.enumerated().min(by: {try compare($0.1, $1.1)})?.0
 	}
 	
+	/// Returns the index for the element which a comparator function determined to be the biggest.
+	///
+	/// - Parameter compare: Comparator function
+	/// - Returns: Index of the largest element in the collection
+	/// - Throws: An error if the comparator function throws an error
 	public func maxIndex(by compare: @escaping (Element, Element) throws -> Bool) rethrows -> Int? {
 		return try self.enumerated().max(by: {try compare($0.1, $1.1)})?.0
 	}
 	
+	/// Returns a randomly chosen element from the collection.
+	///
+	/// - Returns: A random element from the collection
 	public func random() -> Element {
 		return self[Int(arc4random_uniform(UInt32(self.count)))]
 	}
 }
 
-public extension Array where Element: Comparable {
+public extension Collection where Element: Comparable, Index == Int {
+	
+	/// Returns the index of the smallest value of a collection of comparable elements
+	///
+	/// - Returns: Index of the smallest value
 	public func minIndex() -> Int? {
 		return self.minIndex(by: <)
 	}
 	
+	/// Returns the index of the largest value of a collection of comparable elements
+	///
+	/// - Returns: Index of the largest value
 	public func maxIndex() -> Int? {
 		return self.maxIndex(by: <)
 	}
 }
 
-public func randomCirclePoint() -> Sample {
-	let t = 2 * Float.pi * Float.random()
-	let r = Float.random()
-	return [sqrt(r) * cos(t), sqrt(r) * sin(t)]
-}
-
-public func randomSquarePoint() -> Sample {
-	return [Float.random() * 2 - 1, Float.random() * 2 - 1]
-}
-
-public func randomCubePoint() -> Sample {
-	return [Float.random() * 2 - 1, Float.random() * 2 - 1, Float.random() * 2 - 1]
-}
-
-public func randomPlanePoint() -> Sample {
-	let squarePoint = randomSquarePoint()
-	let x = squarePoint[0]
-	let z = squarePoint[1]
-	let y = x * x - z * z * z
-	return [x,y,z]
-}
-
 public extension Float {
+	
+	/// Generates a random floating point number between 0 and 1.
+	///
+	/// - Returns: The random float number
 	public static func random() -> Float {
 		return Float(drand48())
 	}
 }
 
+/// Computes the topological distance between two hexagons in
+/// a hexagonal grid.
+///
+/// - Parameters:
+///   - from: Index of the first hexagon
+///   - to: Index of the second hexagon
+/// - Returns: The topological distance between two hexagons.
 public func hexagonGridDistance(from: (column: Int, row: Int), to: (column: Int, row: Int)) -> Int {
+	// Based on http://www.redblobgames.com/grids/hexagons/
+	/// Transforms hexagon coordinates into a cube coordinate system
 	func toCubeCoordinates(point: (column: Int, row: Int)) -> (x: Int, y: Int, z: Int) {
 		let x = point.column - (point.row + (point.row & 1)) / 2
 		let z = point.row
@@ -113,20 +137,19 @@ public func hexagonGridDistance(from: (column: Int, row: Int), to: (column: Int,
 		return (x, y, z)
 	}
 	
+	// Computes the distance between the two cube coordinates
 	let fromCube = toCubeCoordinates(point: from)
 	let toCube = toCubeCoordinates(point: to)
 	
 	return max(abs(fromCube.x - toCube.x), abs(fromCube.y - toCube.y), abs(fromCube.z - toCube.z))
-	//	return (abs(fromCube.x - toCube.x) + abs(fromCube.y - toCube.y) + abs(fromCube.z - toCube.z)) / 2
-}
-
-public extension Int {
-	public func map<Result>(_ transform: (Int) throws -> Result) rethrows -> [Result] {
-		return try (0 ..< self).map(transform)
-	}
 }
 
 public extension SelfOrganizingMap {
+	
+	/// Converts a SOM into a CSV string and writes it to a given location
+	///
+	/// - Parameter url: Location at which the CSV file should be written
+	/// - Throws: An error if the file could not be written
 	public func write(to url: URL) throws {
 		let dimensionsString = self.dimensionSizes.map(String.init).joined(separator: ",")
 		
@@ -141,6 +164,10 @@ public extension SelfOrganizingMap {
 			.write(to: url, atomically: true, encoding: .ascii)
 	}
 	
+	/// Initializes a SOM from a CSV file at a given location
+	///
+	/// - Parameter url: Location of the CSV file
+	/// - Throws: An error if the file could not be read or has an invalid format
 	public convenience init(contentsOf url: URL) throws {
 		let contents = try String(contentsOf: url)
 		let lines = contents.components(separatedBy: .newlines).filter { !$0.isEmpty }
@@ -170,19 +197,55 @@ public extension SelfOrganizingMap {
 	}
 }
 
+
+/// Hexagon grid distance function which can be used on as a SOM distance function
+///
+/// - Parameters:
+///   - from: From coordinate
+///   - to: To coordinate
+/// - Returns: Topological distance between the two coordinates
 public func hexagonDistance(from: [Int], to: [Int]) -> Float {
 	return Float(hexagonGridDistance(from: (column: from[0], row: from[1]), to: (column: to[0], row: to[1])))
 }
 
+
+/// Manhattan distance between two points
+///
+/// The Manhattan distance is defined as the sum of the differences
+/// between the individual components of the input vectors.
+///
+/// - Parameters:
+///   - from: Start point
+///   - to: End point
+/// - Returns: Manhattan distance between two points
+public func manhattanDistance(from: [Int], to: [Int]) -> Float {
+	return Float(zip(from, to).map(-).map(abs).reduce(0, +))
+}
+
+
+public func randomSquarePoint() -> Sample {
+	return [Float.random(), Float.random()]
+}
+
+/// An error indicating that something had an invalid value or format
 public struct ValidationError: Error, CustomStringConvertible {
+	
+	/// A description of the error which can be presented to the user
 	public let description: String
 	
+	/// Creates a new validation error with a given description
+	///
+	/// - Parameter description: A description of the error for the user
 	public init(description: String) {
 		self.description = description
 	}
 }
 
 public extension Int {
+	
+	/// Initializes an integer value and validates that it is greater than (not equal to or less than) zero.
+	///
+	/// - Parameter value: Value which should be validated
 	public init(validatePositive value: Int) throws {
 		guard value > 0 else {
 			throw ValidationError(description: "Value \(value) expected to be positive.")
