@@ -37,16 +37,23 @@ let main = command(
 ) { step, iterations, output in
 	let outputURL = URL(fileURLWithPath: output)
 	
-	let map = SelfOrganizingMap(20, 20, outputSize: 2, distanceFunction: manhattanDistance)
+//	let nodes: [Sample] = (0...4).flatMap{ y -> [Sample] in
+//		(0...4).map { x in
+//			[Float(x) / 4, Float(y) / 4]
+//		}
+//	}
+//	let map = SelfOrganizingMap(nodes: nodes, dimensionSizes: [5, 5], distanceFunction: euclideanDistance)
+	
+	let map = SelfOrganizingMap(20, 20, outputSize: 2, distanceFunction: euclideanDistance)
 	let renderer = SOMInputSpaceRenderer(map: map, type: .grid)
 	
-	guard let context = CGContext(outputURL as CFURL, mediaBox: [CGRect(x: 0, y: 0, width: 620, height: 600)], nil) else {
+	guard let context = CGContext(outputURL as CFURL, mediaBox: [CGRect(x: 0, y: 0, width: 200, height: 200)], nil) else {
 		fatalError("Could not render image. Context could not be created.")
 	}
 	
 	for iteration in Progress(0 ... iterations) {
 		map.update(with: randomSquarePoint(), totalIterations: iterations, currentIteration: iteration, neighbourhoodScale: 1)
-		
+
 		if iteration % step == 0 {
 			context.beginPDFPage(nil)
 			context.translateBy(x: 10, y: 10)
@@ -55,6 +62,23 @@ let main = command(
 		}
 	}
 	
+//	context.beginPDFPage(nil)
+//	context.translateBy(x: 10, y: 10)
+//
+//	context.setLineDash(phase: 0, lengths: [2, 5])
+//	renderer.strokeColor = CGColor(gray: 0.5, alpha: 1)
+//	renderer.render(in: context, size: CGSize(width: 180, height: 180))
+//
+//	context.setLineDash(phase: 0, lengths: [])
+//	map.update(with: [0.4, 0.4], totalIterations: 100, currentIteration: 100, neighbourhoodScale: 5)
+//	renderer.strokeColor = .black
+//	renderer.render(in: context, size: CGSize(width: 180, height: 180))
+//
+//	context.setFillColor(CGColor(red: 0, green: 0, blue: 1, alpha: 1))
+//	context.addArc(center: CGPoint(x: 0.4 * 180, y: 0.4 * 180), radius: 3, startAngle: 0, endAngle: 2 * CGFloat.pi, clockwise: false)
+//	context.fillPath()
+//
+//	context.endPDFPage()
 	context.flush()
 }
 

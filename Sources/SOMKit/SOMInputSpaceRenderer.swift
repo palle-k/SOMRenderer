@@ -51,6 +51,8 @@ public struct SOMInputSpaceRenderer: Renderer {
 	public let map: SelfOrganizingMap
 	public let mapType: MapType
 	
+	public var strokeColor = CGColor.black
+	
 	/// Creates a new renderer which renders a given Self-Organizing Map
 	/// in the input space.
 	///
@@ -73,7 +75,7 @@ public struct SOMInputSpaceRenderer: Renderer {
 		let horizontalScale = size.width / CGFloat(maxX - minX)
 		let verticalScale = size.height / CGFloat(maxY - minY)
 		
-		context.setStrokeColor(.black)
+		context.setStrokeColor(strokeColor)
 		
 		// Drawing the self organizing map
 		if mapType == .grid {

@@ -222,6 +222,10 @@ public func manhattanDistance(from: [Int], to: [Int]) -> Float {
 	return Float(zip(from, to).map(-).map(abs).reduce(0, +))
 }
 
+public func euclideanDistance(from: [Int], to: [Int]) -> Float {
+	let distanceSquared = zip(from, to).map(-).map{$0 * $0}.reduce(0, +)
+	return sqrt(Float(distanceSquared))
+}
 
 public func randomSquarePoint() -> Sample {
 	return [Float.random(), Float.random()]
