@@ -36,18 +36,11 @@ let main = command(
 	Argument<String>("output", description: "Output path for the visualization to be written to", validator: nil)
 ) { step, iterations, output in
 	let outputURL = URL(fileURLWithPath: output)
-	
-//	let nodes: [Sample] = (0...4).flatMap{ y -> [Sample] in
-//		(0...4).map { x in
-//			[Float(x) / 4, Float(y) / 4]
-//		}
-//	}
-//	let map = SelfOrganizingMap(nodes: nodes, dimensionSizes: [5, 5], distanceFunction: euclideanDistance)
-	
+
 	let map = SelfOrganizingMap(20, 20, outputSize: 2, distanceFunction: euclideanDistance)
 	let renderer = SOMInputSpaceRenderer(map: map, type: .grid)
 	
-	guard let context = CGContext(outputURL as CFURL, mediaBox: [CGRect(x: 0, y: 0, width: 200, height: 200)], nil) else {
+	guard let context = CGContext(outputURL as CFURL, mediaBox: [CGRect(x: 0, y: 0, width: 620, height: 600)], nil) else {
 		fatalError("Could not render image. Context could not be created.")
 	}
 	
@@ -62,6 +55,14 @@ let main = command(
 		}
 	}
 	
+	// Code to generate a visualization of a single training step
+//	let nodes: [Sample] = (0...4).flatMap{ y -> [Sample] in
+//		(0...4).map { x in
+//			[Float(x) / 4, Float(y) / 4]
+//		}
+//	}
+//	let map = SelfOrganizingMap(nodes: nodes, dimensionSizes: [5, 5], distanceFunction: euclideanDistance)
+//
 //	context.beginPDFPage(nil)
 //	context.translateBy(x: 10, y: 10)
 //

@@ -145,7 +145,7 @@ struct MovieSearchEngine {
 			}
 			return (index: tagIndex, priority: tag.priority)
 		}
-		
+		// Assign a score to each SOM node
 		let nodeScores = tagIndices.reduce(Sample(repeating: 0, count: index.map.nodes.count)) { (partialScores, tag) -> Sample in
 			let tagScores = self.index.map.nodes.map({ node -> Float in
 				node[tag.index] * tag.priority
@@ -157,6 +157,7 @@ struct MovieSearchEngine {
 		
 		let filteredNodes: [(offset: Int, element: Float)]
 		
+		// Filter nodes by minimum threshold to reduce the number of nodes to process
 		if let threshold = request.threshold {
 			filteredNodes = nodeScores.enumerated().filter { (nodeScore) -> Bool in
 				return nodeScore.element >= threshold
@@ -165,14 +166,17 @@ struct MovieSearchEngine {
 			filteredNodes = Array(nodeScores.enumerated())
 		}
 		
+		// Sort nodes by relevance
 		let sortedNodes = filteredNodes.sorted { (first, second) -> Bool in
 			first.element < second.element
 		}.reversed()
 		
+		// Perform inverse projection to find recommended movies
 		let selectedMovieIDs = sortedNodes.flatMap { node -> [Int] in
 			index.mapMovieIndex[node.offset, default: []]
 		}
 		
+		// Gather additional information about movies
 		let selectedMovies = selectedMovieIDs.flatMap { movieID -> Movie? in
 			guard let (imdbID, tmdbID) = index.movieLinks[movieID] else {
 				return nil
@@ -183,6 +187,7 @@ struct MovieSearchEngine {
 			return Movie(id: movieID, title: title, imdbID: imdbID, tmdbID: tmdbID)
 		}
 		
+		// Optionally limit number of returned results.
 		if let count = request.count {
 			return MovieSearchResponse(request: request, movies: Array(selectedMovies.prefix(count)))
 		} else {
