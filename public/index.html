@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-	<title>SOM Movie API</title>
+	<title>SOM Movie Search</title>
 	<style>
 		* {
 			font-family: "Roboto", "Helvetica Neue", "Helvetica", sans-serif;
@@ -183,7 +183,6 @@
 					response.movies.map(movie => {
 						let element = document.createElement('li');
 						element.innerText = movie.title;
-
 						fetch("/info/" + movie.imdb_id)
 							.then(response => response.json())
 							.then(response => {
@@ -253,7 +252,7 @@
 	</script>
 </head>
 <body>
-<h1>SOM Movie API</h1>
+<h1>SOM Movie Search</h1>
 <input id="query_field" onkeyup="searchfield_handle(event)" type="text" placeholder="Enter Query String (action, -science fiction, +aliens, ...)" autocomplete="off" autofocus>
 <button id="query_button" onclick="search()">Search</button>
 <p id="tag_list_title">Similar tags:</p>
