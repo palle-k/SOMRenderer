@@ -101,7 +101,7 @@ public class SelfOrganizingMap
 	public init(_ dimensionSizes: Int..., outputSize: Int, distanceFunction: @escaping ([Int], [Int]) -> Float)
 	{
 		self.dimensionSizes = dimensionSizes
-		self.nodes = (0 ..< dimensionSizes.reduce(1, *)).map{ _ in (0 ..< outputSize).map{_ in Float.random() * 2 - 1 }}
+		self.nodes = (0 ..< dimensionSizes.reduce(1, *)).map{ _ in (0 ..< outputSize).map{_ in Float.random() }}
 		self.temp = UnsafeMutablePointer<Float>.allocate(capacity: outputSize)
 		self.nabla_0 = Float(self.dimensionSizes.max() ?? 1) / 2
 		self.distanceFunction = distanceFunction
